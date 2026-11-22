@@ -1,0 +1,554 @@
+/*
+ * de'makmur brand theme on top of Bootstrap 5.3.
+ * Colors are sampled from the company logo (public/assets/img/logo-original.png).
+ * Use the --brand-* tokens in new CSS; Bootstrap components are re-colored below.
+ */
+
+/* ========== Brand tokens ========== */
+:root {
+    --brand-navy: #194350;        /* wordmark */
+    --brand-teal-dark: #19545e;   /* wings / loop - primary */
+    --brand-teal-darker: #123f48; /* hover / active */
+    --brand-teal: #4fab9b;        /* middle bar - accent */
+    --brand-green: #86be7f;       /* tall bar */
+    --brand-green-light: #99cb8a; /* right wing */
+    --brand-mint: #eaf5f0;        /* soft surface / hover */
+    --brand-mint-border: #d3e8e1;
+    --brand-surface: #f4f8f7;     /* page background */
+    --brand-gradient: linear-gradient(135deg, #19545e 0%, #4fab9b 55%, #99cb8a 100%);
+
+    --app-sidebar-width: 260px;
+
+    /* Bootstrap theme variables */
+    --bs-primary: var(--brand-teal-dark);
+    --bs-primary-rgb: 25, 84, 94;
+    --bs-primary-text-emphasis: #0b2a2f;
+    --bs-primary-bg-subtle: #d7ebe7;
+    --bs-primary-border-subtle: #a9d3cb;
+
+    --bs-success: #2e8b6a;
+    --bs-success-rgb: 46, 139, 106;
+    --bs-success-text-emphasis: #1c5843;
+    --bs-success-bg-subtle: #e2f2e0;
+    --bs-success-border-subtle: #b9dfb3;
+
+    --bs-info: var(--brand-teal);
+    --bs-info-rgb: 79, 171, 155;
+    --bs-info-text-emphasis: #1f5962;
+    --bs-info-bg-subtle: #dcf0ec;
+    --bs-info-border-subtle: #b2ddd5;
+
+    --bs-link-color: var(--brand-teal-dark);
+    --bs-link-color-rgb: 25, 84, 94;
+    --bs-link-hover-color: var(--brand-teal-darker);
+    --bs-link-hover-color-rgb: 18, 63, 72;
+
+    --bs-heading-color: var(--brand-navy);
+    --bs-focus-ring-color: rgba(79, 171, 155, 0.35);
+}
+
+body {
+    background-color: var(--brand-surface);
+}
+
+/* ========== Bootstrap component overrides ========== */
+.btn-primary {
+    --bs-btn-bg: var(--brand-teal-dark);
+    --bs-btn-border-color: var(--brand-teal-dark);
+    --bs-btn-hover-bg: var(--brand-teal-darker);
+    --bs-btn-hover-border-color: var(--brand-teal-darker);
+    --bs-btn-active-bg: #0e353d;
+    --bs-btn-active-border-color: #0e353d;
+    --bs-btn-disabled-bg: var(--brand-teal-dark);
+    --bs-btn-disabled-border-color: var(--brand-teal-dark);
+    --bs-btn-focus-shadow-rgb: 79, 171, 155;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--brand-teal-dark);
+    --bs-btn-border-color: var(--brand-teal-dark);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--brand-teal-dark);
+    --bs-btn-hover-border-color: var(--brand-teal-dark);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--brand-teal-darker);
+    --bs-btn-active-border-color: var(--brand-teal-darker);
+    --bs-btn-disabled-color: var(--brand-teal-dark);
+    --bs-btn-disabled-border-color: var(--brand-teal-dark);
+    --bs-btn-focus-shadow-rgb: 79, 171, 155;
+}
+
+.btn-success {
+    --bs-btn-bg: #2e8b6a;
+    --bs-btn-border-color: #2e8b6a;
+    --bs-btn-hover-bg: #26755a;
+    --bs-btn-hover-border-color: #26755a;
+    --bs-btn-active-bg: #1f624b;
+    --bs-btn-active-border-color: #1f624b;
+    --bs-btn-focus-shadow-rgb: 46, 139, 106;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #8fcbbf;
+    box-shadow: 0 0 0 0.25rem rgba(79, 171, 155, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--brand-teal-dark);
+    border-color: var(--brand-teal-dark);
+}
+
+.form-check-input:focus {
+    border-color: #8fcbbf;
+    box-shadow: 0 0 0 0.25rem rgba(79, 171, 155, 0.25);
+}
+
+.pagination {
+    --bs-pagination-color: var(--brand-teal-dark);
+    --bs-pagination-hover-color: var(--brand-teal-darker);
+    --bs-pagination-focus-color: var(--brand-teal-darker);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(79, 171, 155, 0.25);
+    --bs-pagination-active-bg: var(--brand-teal-dark);
+    --bs-pagination-active-border-color: var(--brand-teal-dark);
+}
+
+.nav-pills {
+    --bs-nav-pills-link-active-bg: var(--brand-teal-dark);
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--brand-teal-dark);
+}
+
+.list-group {
+    --bs-list-group-active-bg: var(--brand-teal-dark);
+    --bs-list-group-active-border-color: var(--brand-teal-dark);
+}
+
+.progress,
+.progress-stacked {
+    --bs-progress-bar-bg: var(--brand-teal-dark);
+}
+
+.table-dark {
+    --bs-table-color: #fff;
+    --bs-table-bg: var(--brand-navy);
+    --bs-table-border-color: #2b5564;
+    --bs-table-striped-bg: #20495a;
+    --bs-table-hover-bg: #244f5f;
+}
+
+.card {
+    --bs-card-border-color: var(--brand-mint-border);
+}
+
+.card-header {
+    color: var(--brand-navy);
+}
+
+/* ========== Layout: sidebar ========== */
+.app-sidebar {
+    --bs-offcanvas-width: var(--app-sidebar-width);
+    background-color: #fff;
+    border-right: 1px solid var(--brand-mint-border);
+}
+
+@media (min-width: 992px) {
+    .app-sidebar {
+        width: var(--app-sidebar-width);
+        flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    border-bottom: 1px solid var(--brand-mint-border);
+}
+
+.app-brand-mark {
+    width: 40px;
+    height: 40px;
+}
+
+.app-brand-wordmark {
+    height: 20px;
+    width: auto;
+    display: block;
+}
+
+.app-brand-caption {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-teal);
+    font-weight: 600;
+}
+
+.app-sidebar .sidebar-heading {
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #7b979c;
+}
+
+.app-sidebar .nav-link {
+    color: var(--brand-navy);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+}
+
+.app-sidebar .nav-link .bi {
+    color: var(--brand-teal-dark);
+    font-size: 1.05rem;
+}
+
+.app-sidebar .nav-link:not(.active):hover {
+    background-color: var(--brand-mint);
+    color: var(--brand-teal-darker);
+}
+
+.app-sidebar .nav-link.active {
+    background: var(--brand-teal-dark);
+    color: #fff;
+    box-shadow: inset 4px 0 0 var(--brand-green-light);
+}
+
+.app-sidebar .nav-link.active .bi {
+    color: var(--brand-green-light);
+}
+
+/* ========== Layout: main area ========== */
+.app-main {
+    min-width: 0; /* lets wide tables scroll inside the content area */
+}
+
+.app-topbar {
+    background:
+        var(--brand-gradient) top / 100% 3px no-repeat,
+        #fff;
+    border-bottom: 1px solid var(--brand-mint-border);
+}
+
+.app-topbar .page-title {
+    color: var(--brand-navy);
+    font-weight: 600;
+}
+
+.app-footer {
+    border-top: 1px solid var(--brand-mint-border) !important;
+}
+
+/* ========== Auth pages ========== */
+.auth-area {
+    background:
+        radial-gradient(circle at 15% 10%, rgba(153, 203, 138, 0.25), transparent 40%),
+        radial-gradient(circle at 85% 90%, rgba(79, 171, 155, 0.2), transparent 45%),
+        var(--brand-surface);
+}
+
+.auth-logo {
+    width: 200px;
+    max-width: 60vw;
+    height: auto;
+}
+
+.auth-area .card {
+    border: 0;
+    border-top: 4px solid var(--brand-teal);
+    box-shadow: 0 0.5rem 1.5rem rgba(25, 67, 80, 0.08) !important;
+}
+
+/* ========== Shared components ========== */
+.stat-card .stat-icon {
+    width: 3rem;
+    height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    font-size: 1.4rem;
+}
+
+.stat-card .stat-value {
+    color: var(--brand-navy);
+}
+
+.text-brand-gradient {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ========== Settings cards ========== */
+.settings-card {
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.settings-card:hover {
+    border-color: var(--brand-teal);
+    box-shadow: 0 0.5rem 1rem rgba(25, 67, 80, 0.08) !important;
+    transform: translateY(-1px);
+}
+
+/* ========== Audit log ========== */
+.audit-values {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0 0.5rem;
+    font-size: 0.8rem;
+}
+
+.audit-values dt {
+    font-weight: 500;
+    color: var(--brand-navy);
+}
+
+.audit-values dd {
+    margin: 0;
+    word-break: break-word;
+    font-family: var(--bs-font-monospace);
+}
+
+.breadcrumb {
+    --bs-breadcrumb-divider-color: #8aa3a8;
+}
+
+/* ========== Typeahead (assets/js/typeahead.js) ========== */
+.typeahead-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 1050;
+}
+
+.typeahead-menu .dropdown-item {
+    white-space: normal;
+}
+
+/* ========== Document item tables ========== */
+.item-table input[type="number"] {
+    min-width: 90px;
+}
+
+.status-timeline {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.status-timeline li {
+    position: relative;
+    padding: 0 0 1rem 1.5rem;
+    border-left: 2px solid var(--brand-mint-border);
+    margin-left: .4rem;
+}
+
+.status-timeline li:last-child {
+    border-left-color: transparent;
+    padding-bottom: 0;
+}
+
+.status-timeline li::before {
+    content: "";
+    position: absolute;
+    left: -.45rem;
+    top: .2rem;
+    width: .8rem;
+    height: .8rem;
+    border-radius: 50%;
+    background: var(--brand-teal);
+    border: 2px solid #fff;
+}
+
+/* ---- Order tracker (components/order_flow): proposal → invoice → payment → delivery ---- */
+.order-flow-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    counter-reset: step;
+}
+
+.order-flow-step {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+}
+
+/* connector line between the dots */
+.order-flow-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 1rem;
+    left: 2.6rem;
+    right: -0.5rem;
+    height: 2px;
+    background: var(--bs-border-color);
+}
+
+.order-flow-step.is-done:not(:last-child)::after {
+    background: var(--brand-green);
+}
+
+.order-flow-dot {
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.order-flow-text {
+    min-width: 0;
+    padding-top: 0.1rem;
+    background: var(--bs-body-bg);
+    position: relative;
+    z-index: 1;
+    padding-right: 0.5rem;
+}
+
+.order-flow .active-doc {
+    background: var(--brand-mint);
+}
+
+@media (max-width: 767.98px) {
+    .order-flow-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .order-flow-step:not(:last-child)::after {
+        top: 2rem;
+        left: 1rem;
+        right: auto;
+        width: 2px;
+        height: calc(100% - 1.25rem);
+    }
+}
+
+/* Documents & files card (components/order_files) */
+.file-row:hover { background: var(--brand-mint); }
+@media (min-width: 992px) {
+    .border-end-lg { border-right: var(--bs-border-width) solid var(--bs-border-color); }
+    .border-lg-top-0 { border-top: 0 !important; }
+}
+
+/* Page loading bar (htmx navigation; html.is-loading set by app.js) */
+#page-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+    width: 0;
+    height: 3px;
+    background: var(--brand-gradient);
+    opacity: 0;
+    pointer-events: none;
+}
+html.is-loading #page-progress {
+    opacity: 1;
+    animation: page-progress 2.5s cubic-bezier(.1, .7, .3, 1) forwards;
+}
+@keyframes page-progress {
+    from { width: 0; }
+    to { width: 85%; }
+}
+html.is-loading #list-results {
+    opacity: .6;
+    transition: opacity .15s;
+}
+.toast-container { z-index: 1090; }
+@media (prefers-reduced-motion: reduce) {
+    html.is-loading #page-progress { animation: none; width: 85%; }
+}
+
+/* Quick search in the top bar */
+.app-search { width: min(22rem, 45vw); }
+.app-search-results {
+    position: absolute;
+    top: calc(100% + .25rem);
+    right: 0;
+    width: min(28rem, 92vw);
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 1080;
+    display: none;
+}
+.app-search.is-open .app-search-results:not(:empty) { display: block; }
+.search-item:hover, .search-item:focus { background: var(--brand-mint); outline: none; }
+.search-group + .search-group { border-top: var(--bs-border-width) solid var(--bs-border-color); }
+@media (max-width: 575.98px) {
+    .app-search { width: 9.5rem; }
+}
+
+/* Receivables aging cards: left border by age */
+.aging-card { border-left: 4px solid var(--bs-border-color); }
+.aging-current { border-left-color: var(--brand-teal); }
+.aging-d1_30 { border-left-color: var(--bs-warning); }
+.aging-d31_60 { border-left-color: #fd7e14; }
+.aging-d61_90 { border-left-color: var(--bs-danger); }
+.aging-d90 { border-left-color: var(--bs-dark); }
+
+/* ---- Product pictures ---- */
+.product-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: .375rem;
+    border: 1px solid var(--bs-border-color);
+    background: #fff;
+}
+.product-thumb-lg { width: 96px; height: 96px; }
+.product-thumb-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bs-secondary-color);
+    background: var(--brand-surface);
+}
+.product-picture { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: #fff; }
+.product-picture-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .25rem;
+    color: var(--bs-secondary-color);
+    background: var(--brand-surface);
+    border-radius: var(--bs-card-inner-border-radius);
+}
+.typeahead-thumb { width: 32px; height: 32px; object-fit: cover; border-radius: .25rem; flex-shrink: 0; }
+.item-description { font-size: .8125rem; resize: vertical; }
+
+/* Names are typed/shown in upper case (stored lower case); keep example placeholders readable. */
+.text-uppercase::placeholder { text-transform: none; }
+
+/* ---- Activities & follow-ups (CRM) ---- */
+.activity-icon { width: 1.75rem; flex-shrink: 0; font-size: 1.05rem; text-align: center; padding-top: .1rem; }
+.activity-item.is-open { background: var(--brand-surface); }
+.activity-item.is-overdue { border-left: 3px solid var(--bs-danger); }
+.activity-done > summary { list-style: none; display: inline-block; }
+.activity-done > summary::-webkit-details-marker { display: none; }
+.min-w-0 { min-width: 0; }
+
+/* Document lines: price (excl./incl.) and per-line tax controls keep a usable width. */
+.item-table [data-name="unit_price"], .item-table .price-base { min-width: 8.5rem; }
+.item-table .line-tax { min-width: 8rem; }
+.item-table [data-name="discount_amount"] { min-width: 6.5rem; }

@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Order tracker and "Documents & files" (App\Services\OrderFlow / OrderFiles).
+ */
+return [
+    'tracker'      => 'Order tracker',
+    'stepProposal' => 'Proposal',
+    'stepInvoice'  => 'Invoice',
+    'stepPayment'  => 'Payment',
+    'stepDelivery' => 'Delivery',
+    'creditNote'   => 'Credit note',
+    'deliveryNote' => 'Delivery note',
+    'noProposal'   => 'Invoiced without a proposal',
+    'toInvoice'    => 'To be invoiced',
+    'notYet'       => 'Not yet',
+    'issuedOn'     => 'Issued {0}',
+    'refundDue'    => 'Refund due {0}',
+    'paidInFull'   => 'Paid in full',
+    'orderCancelled' => 'Order cancelled',
+    'overdueOpen'  => 'Overdue · open {0}',
+    'partlyPaidOpen' => 'Partly paid · open {0}',
+    'dueOn'        => 'Due {0} · {1}',
+    'noGoods'      => 'No goods (services only)',
+    'deliveredOf'  => '{0} of {1} delivered',
+    'allDelivered' => 'All delivered',
+    'onTheWay'     => '{0} on the way',
+
+    'filesTitle'   => 'Documents & files',
+    'printable'    => 'Printable documents',
+    'attachments'  => 'Attachments',
+    'noFiles'      => 'No files yet. Add the signed purchase order, transfer proofs, bukti potong or handover photos here.',
+    'removeFileConfirm' => 'Remove the file "{0}"? It stays in the audit log.',
+    'belongsTo'    => 'Belongs to',
+    'file'         => 'File',
+    'maxSize'      => 'max {0} MB',
+    'upload'       => 'Upload',
+    'proposalNo'   => 'Proposal {0}',
+    'invoiceNo'    => 'Invoice {0}',
+    'deliveryNo'   => 'Delivery note {0}',
+    'payment'      => 'Payment',
+    'invoiceDraftPreview' => 'Invoice (draft preview)',
+    'void'         => 'void',
+    'reversed'     => 'reversed',
+    'cancelled'    => 'cancelled',
+];
