@@ -51,6 +51,19 @@
             </div>
         </a>
     </div>
+    <?php if (user_can('backups.manage')) : ?>
+    <div class="col-12 col-md-6">
+        <a href="<?= site_url('settings/backups') ?>" class="card shadow-sm h-100 text-decoration-none settings-card">
+            <div class="card-body d-flex gap-3 align-items-start">
+                <span class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-database-down"></i></span>
+                <div>
+                    <div class="fw-semibold text-body"><?= lang('Backups.backups') ?></div>
+                    <div class="small text-body-secondary"><?= lang('Backups.backupsText') ?></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <?php endif ?>
 </div>
 
 <h2 class="h6 text-uppercase text-body-secondary mb-2"><?= lang('Settings.lookups') ?></h2>

@@ -216,6 +216,12 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         $routes->post('bank-accounts/(:num)', 'Settings\BankAccounts::update/$1');
         $routes->post('bank-accounts/(:num)/delete', 'Settings\BankAccounts::delete/$1');
 
+        $routes->get('backups', 'Settings\Backups::index', ['filter' => 'permission:backups.manage']);
+        $routes->post('backups', 'Settings\Backups::create', ['filter' => 'permission:backups.manage']);
+        $routes->get('backups/(:segment)/download', 'Settings\Backups::download/$1', ['filter' => 'permission:backups.manage']);
+        $routes->post('backups/(:segment)/delete', 'Settings\Backups::delete/$1', ['filter' => 'permission:backups.manage']);
+        $routes->post('backups/(:segment)/restore', 'Settings\Backups::restore/$1', ['filter' => 'permission:backups.restore']);
+
         $routes->get('calculation', 'Settings\Calculation::edit');
         $routes->post('calculation', 'Settings\Calculation::update');
 

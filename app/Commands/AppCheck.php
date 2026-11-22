@@ -6,6 +6,7 @@ namespace App\Commands;
 
 use App\Database\Support\ProtectionTriggers;
 use App\Models\CompanyProfileModel;
+use App\Services\BackupService;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use Config\Documents;
@@ -37,8 +38,8 @@ class AppCheck extends BaseCommand
         $this->section('PHP');
         $this->check(PHP_VERSION_ID >= 80200, 'PHP ' . PHP_VERSION, 'PHP 8.2 or newer is required');
 
-        foreach (['intl', 'mbstring', 'bcmath', 'mysqli', 'gd', 'fileinfo', 'dom', 'json'] as $ext) {
-            $this->check(extension_loaded($ext), "extension {$ext}", "enable extension={$ext} in php.ini (gd: PDFs and QR codes; fileinfo: uploads)");
+        foreach (['intl', 'mbstring', 'bcmath', 'mysqli', 'gd', 'fileinfo', 'dom', 'json', 'phar', 'zlib'] as $ext) {
+            $this->check(extension_loaded($ext), "extension {$ext}", "enable extension={$ext} in php.ini (gd: PDFs and QR codes; fileinfo: uploads; phar, zlib: backups)");
         }
 
         $maxUpload = min($this->iniBytes('upload_max_filesize'), $this->iniBytes('post_max_size'));
@@ -70,6 +71,21 @@ class AppCheck extends BaseCommand
         }
 
         $this->check(! is_dir(FCPATH . 'uploads'), 'no uploads inside public/', 'uploaded files must stay in writable/uploads/');
+
+        $this->section('Backups');
+        $backupPath = config('Backup')->path;
+
+        if (! is_dir($backupPath)) {
+            @mkdir($backupPath, 0775, true);
+        }
+
+        $this->check(is_dir($backupPath) && is_writable($backupPath), 'backup folder writable (' . $backupPath . ')', 'give the web server user and the scheduled job write access to it');
+        $realBackup = realpath($backupPath) ?: $backupPath;
+        $realPublic = realpath(FCPATH) ?: FCPATH;
+        $this->check(! str_starts_with(str_replace('\\', '/', $realBackup), str_replace('\\', '/', $realPublic)), 'backup folder outside public/', 'set backup.path to a folder that the web server does not serve');
+        $latest = (new BackupService())->list()[0] ?? null;
+        $this->check($latest !== null && strtotime((string) $latest['created_at']) > time() - 2 * 86400,
+            $latest === null ? 'no backup yet' : 'latest backup ' . $latest['created_at'], 'schedule php spark backup:create --prune daily and copy the backup folder off the server', true);
 
         $this->section('Database');
 
@@ -109,7 +125,7 @@ class AppCheck extends BaseCommand
 
         CLI::newLine();
         CLI::write(sprintf('%d failed, %d warnings.', $this->failed, $this->warned), $this->failed > 0 ? 'red' : ($this->warned > 0 ? 'yellow' : 'green'));
-        CLI::write('Also schedule: php spark invoices:mark-overdue (daily) and a daily database backup.');
+        CLI::write('Also schedule (daily): php spark invoices:mark-overdue and php spark backup:create --prune; copy the backup folder off the server.');
 
         return $this->failed > 0 ? EXIT_ERROR : EXIT_SUCCESS;
     }

@@ -128,4 +128,8 @@ return [
     'contactRole_COMMITTEE' => 'Komite sekolah',
     'contactRole_FOUNDATION' => 'Yayasan',
     'contactRole_OTHER' => 'Lainnya',
+    'backupTrigger_manual' => 'Manual',
+    'backupTrigger_scheduled' => 'Terjadwal',
+    'backupTrigger_pre-restore' => 'Sebelum pemulihan',
+    'backupTrigger_cli' => 'Baris perintah',
 ];

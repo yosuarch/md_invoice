@@ -1,13 +1,13 @@
 # Deployment — de'makmur Invoicing (Warung Sahabat)
 
-Step-by-step installation on a production server, plus updates, backups and the daily job.
+Step-by-step installation on a production server, plus updates, backups / restore and the daily jobs.
 After every installation or update run `php spark app:check` — it lists what is still missing (FAIL blocks go-live, WARN should be fixed).
 
 ## 1. Server requirements
 
 | Item | Requirement |
 |---|---|
-| PHP | 8.2+ (developed on 8.6) with `intl`, `mbstring`, `bcmath`, `mysqli`, `gd`, `fileinfo`, `dom`, `json`; OPcache recommended |
+| PHP | 8.2+ (developed on 8.6) with `intl`, `mbstring`, `bcmath`, `mysqli`, `gd`, `fileinfo`, `dom`, `json`, `phar` and `zlib` (backups); OPcache recommended |
 | Database | MariaDB 10.6+ (InnoDB, utf8mb4) |
 | Web server | Apache 2.4 with `mod_rewrite` (uses `public/.htaccess`), or Nginx + PHP-FPM |
 | HTTPS | Required (login, session cookies) |
@@ -31,7 +31,7 @@ expose_php = Off
 
 ## 2. Install the code
 
-1. Copy the project to the server, e.g. `/var/www/md-invoice` (Linux) or `D:\apps\md-invoice` (Windows). Do **not** copy `.env`, `writable/logs/*`, `writable/session/*`, `writable/uploads/*` from a development machine.
+1. Copy the project to the server, e.g. `/var/www/md-invoice` (Linux) or `D:\apps\md-invoice` (Windows). Do **not** copy `.env`, `writable/logs/*`, `writable/session/*`, `writable/uploads/*`, `writable/backups/*` from a development machine.
 2. Install dependencies without development tools:
    ```bash
    composer install --no-dev --optimize-autoloader
@@ -41,7 +41,7 @@ expose_php = Off
    cp env.production.example .env
    php spark key:generate
    ```
-4. Permissions: the web server user (e.g. `www-data`) needs write access to `writable/` (cache, logs, session, uploads) and nothing else.
+4. Permissions: the web server user (e.g. `www-data`) needs write access to `writable/` (cache, logs, session, uploads, backups) and nothing else. Run the scheduled jobs (§6) as the same user.
    ```bash
    chown -R www-data:www-data writable && chmod -R 775 writable
    ```
@@ -72,7 +72,9 @@ mysql -u root -p md_invoice < protection.sql
 php spark db:protection-sql --check                # should report all triggers installed
 ```
 
-Re-run this after updates that add protected tables (the release notes / `app:check` will say so).
+Re-run this after updates that add protected tables (the release notes / `app:check` will say so), and **after every restore of a backup** (a restore rebuilds the tables, which removes their triggers; §7).
+
+The grants above are also what backups and restores need (SELECT to read, CREATE / DROP / INSERT to rebuild the tables); no extra privileges.
 
 ## 4. First admin and company data
 
@@ -134,26 +136,66 @@ server {
 
 Restart PHP-FPM / Apache after changing `php.ini` or enabling extensions (PDFs fail with "ext-gd not loaded" otherwise).
 
-## 6. Scheduled job (daily)
+## 6. Scheduled jobs (daily)
 
-Marks unpaid invoices past their due date as OVERDUE. Idempotent; errors go to `writable/logs`.
+Two daily jobs, run as the web server user (so both can write to `writable/`). Errors go to `writable/logs`.
+
+| Time | Command | What it does |
+|---|---|---|
+| 00:05 | `php spark invoices:mark-overdue` | marks unpaid invoices past their due date as OVERDUE (idempotent) |
+| 00:30 | `php spark backup:create --prune` | backup of the database and uploaded files, removes old scheduled backups (§7) |
 
 - Linux cron (as the web server user):
   ```cron
   5 0 * * * cd /var/www/md-invoice && php spark invoices:mark-overdue >> writable/logs/cron.log 2>&1
+  30 0 * * * cd /var/www/md-invoice && php spark backup:create --prune >> writable/logs/cron.log 2>&1
   ```
-- Windows Task Scheduler: daily at 00:05, program `php.exe`, arguments `spark invoices:mark-overdue`, "Start in" = the app folder, run whether the user is logged on or not.
+- Windows Task Scheduler: two daily tasks, program `php.exe`, "Start in" = the app folder, run whether the user is logged on or not: at 00:05 with arguments `spark invoices:mark-overdue`, at 00:30 with arguments `spark backup:create --prune`. Then a third task copies the backup folder off the server (§7).
 
-## 7. Backups
+## 7. Backups and restore
 
-The audit log and financial records are append-only, so backups are the only way back after a lost server.
+The audit log and financial records are append-only, so backups are the only way back after a lost server or a serious mistake.
 
-- **Database**, daily (keep at least 30 days, store a copy off the server):
-  ```bash
-  mysqldump --single-transaction --routines --triggers md_invoice | gzip > /backup/md_invoice-$(date +%F).sql.gz
-  ```
-- **Files**: `writable/uploads/` (company logo, attachments) and `.env` (keep the encryption key).
-- Test a restore once on a separate machine.
+**What a backup is.** One file `backup-YYYYMMDD-HHMMSS[-label].tar.gz` (plus a small `.json` description next to it) containing:
+- `database.sql`: every table (app, users, migrations), read in a consistent snapshot, so users can keep working while it runs;
+- `uploads/`: everything in `writable/uploads/` (company logo, product pictures, attachments);
+- `manifest.json`: date, app version, row counts and a checksum.
+
+Not included: `.env` (secrets) and the protection triggers (the DBA installs them, see §3). Backups contain personal and financial data: keep them as protected as the database.
+
+**Where.** `writable/backups/` (outside `public/`; set `backup.path` in `.env` to use another folder, e.g. a second disk). Retention: scheduled backups are kept 30 days, and the newest 7 always stay (`backup.keepDays`, `backup.keepMin`). Manual, command-line and safety backups are never removed automatically; delete them in the app when no longer needed.
+
+**Daily, automatically:** `php spark backup:create --prune` (scheduled in §6).
+
+**Off-site copy (required):** a backup on the same disk does not survive a lost server. Copy the backup folder daily to another machine or cloud storage, e.g.:
+```bash
+rsync -a --delete /var/www/md-invoice/writable/backups/ backup-host:/backups/md-invoice/     # Linux
+```
+```bat
+robocopy "C:\apps\md-invoice\writable\backups" "\\nas\backups\md-invoice" /MIR /R:2 /W:5   :: Windows (Task Scheduler)
+```
+Keep a copy of `.env` (at least `encryption.key` and the database password) in a password manager or safe, separately from the backups.
+
+**Manual backups:**
+- In the app: **Settings → Backups → Create backup now** (admin; list, download and delete are there too).
+- On the server: `php spark backup:create --label before-update`, `php spark backup:list`.
+
+**Restore** (replaces ALL data, database and uploaded files, with the backup):
+1. In the app: **Settings → Backups → Restore** on the wanted backup, and type `RESTORE` to confirm (admin only, permission `backups.restore`). Or on the server: `php spark backup:restore <file>` and type the database name to confirm. A backup from another machine is first copied into the backup folder (the web upload limit is too small for backups).
+2. The app first makes a **safety backup** of the current data (type "Before restore"). If anything goes wrong, restore that one with `php spark backup:restore <safety file>`.
+3. Everybody is logged out. If the backup came from an older app version, the migrations run automatically; a backup from a newer version is refused (update the code first).
+4. The restore rebuilds all tables, which **removes the protection triggers**: the DBA runs the protection SQL again (§3), then `php spark app:check`.
+5. Smoke test: log in, open a few invoices and their PDFs, and check the latest payment.
+
+A restore from the app runs in the web request; for a large database (or when the web server has a short request timeout) use the command line instead.
+
+**Test a restore** once before going live and then every few months, on a separate machine (install the app as in §2–§3 with an empty database, copy a backup into `writable/backups/`, then run `php spark backup:restore <file>`).
+
+**DBA alternative:** a server-level dump can be made in addition (it also contains the triggers):
+```bash
+mariadb-dump --single-transaction --routines --triggers md_invoice | gzip > /backup/md_invoice-$(date +%F).sql.gz
+```
+It does not contain `writable/uploads/`; back that folder up separately.
 
 ## 8. Go-live check
 
@@ -161,13 +203,14 @@ The audit log and financial records are append-only, so backups are the only way
 php spark app:check
 ```
 
-Then a manual smoke test: log in → create a proposal → approve → create and issue the invoice → open the invoice PDF and scan its QR code → record a payment → create a delivery note and its PDFs → upload an attachment → open Reports.
+Then create a first backup (**Settings → Backups**), check that the scheduled backup and the off-site copy run the next night, and do a manual smoke test: log in → create a proposal → approve → create and issue the invoice → open the invoice PDF and scan its QR code → record a payment → create a delivery note and its PDFs → upload an attachment → open Reports.
 
 ## 9. Updating
 
 ```bash
 # optional: announce a short maintenance window (or stop the web server) while updating
-# 1. back up the database and writable/uploads (section 7)
+# 1. back up the database and uploaded files (section 7)
+php spark backup:create --label before-update
 # 2. copy the new code (keep .env and writable/)
 composer install --no-dev --optimize-autoloader
 php spark migrate --all

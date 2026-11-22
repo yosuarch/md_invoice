@@ -62,6 +62,8 @@ class AuthGroups extends ShieldAuthGroups
      */
     public array $permissions = [
         'settings.manage'     => 'Manage company profile, lookups and bank accounts',
+        'backups.manage'      => 'Create, download and delete backups',
+        'backups.restore'     => 'Restore a backup (replaces all data)',
         'users.manage'        => 'Create, edit, ban staff users and assign roles',
         'audit.view'          => 'View the audit log',
         'records.view_all'    => 'See all customers, proposals, invoices and deliveries (without it: only records related to the user)',
@@ -96,7 +98,7 @@ class AuthGroups extends ShieldAuthGroups
      */
     public array $matrix = [
         'admin' => [
-            'settings.*', 'users.*', 'audit.*', 'records.*', 'customers.*', 'salesreps.*', 'contacts.*', 'crm.*', 'products.*', 'prices.*', 'proposals.*',
+            'settings.*', 'backups.*', 'users.*', 'audit.*', 'records.*', 'customers.*', 'salesreps.*', 'contacts.*', 'crm.*', 'products.*', 'prices.*', 'proposals.*',
             'invoices.*', 'payments.*', 'credit_notes.*', 'deliveries.*', 'reports.*',
         ],
         // Sales: own schools only (view + contacts + activities; school data, addresses and reps stay with admin).

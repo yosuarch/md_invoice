@@ -129,4 +129,8 @@ return [
     'contactRole_COMMITTEE' => 'School committee',
     'contactRole_FOUNDATION' => 'Foundation',
     'contactRole_OTHER' => 'Other',
+    'backupTrigger_manual' => 'Manual',
+    'backupTrigger_scheduled' => 'Scheduled',
+    'backupTrigger_pre-restore' => 'Before restore',
+    'backupTrigger_cli' => 'Command line',
 ];
