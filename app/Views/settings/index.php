@@ -29,6 +29,7 @@
             </div>
         </a>
     </div>
+    <?php if (user_can('settings.system')) : ?>
     <div class="col-12 col-md-6">
         <a href="<?= site_url('settings/numbering') ?>" class="card shadow-sm h-100 text-decoration-none settings-card">
             <div class="card-body d-flex gap-3 align-items-start">
@@ -51,6 +52,7 @@
             </div>
         </a>
     </div>
+    <?php endif ?>
     <?php if (user_can('backups.manage')) : ?>
     <div class="col-12 col-md-6">
         <a href="<?= site_url('settings/backups') ?>" class="card shadow-sm h-100 text-decoration-none settings-card">

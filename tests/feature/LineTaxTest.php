@@ -30,7 +30,7 @@ final class LineTaxTest extends AppTestCase
     {
         parent::setUp();
 
-        $this->admin = $this->createUser('admin');
+        $this->admin = $this->createUser('app_admin');
     }
 
     public function testInclTaxConversionRounding(): void

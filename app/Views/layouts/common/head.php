@@ -20,7 +20,7 @@ $appName   = config('Navigation')->appName;
     <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon-64.png') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css?v=5.3.3') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=1.11.3') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('assets/css/app.css') ?>">
 
     <?php /* Global scripts load once in <head>: the staff layout swaps only <body> (htmx boost), so they must not
              be re-run on every page. They only define functions and delegated listeners; DOM work runs via htmx.onLoad. */ ?>
@@ -29,9 +29,9 @@ $appName   = config('Navigation')->appName;
     <script>window.AppCalc = <?= json_encode(\App\Services\CalcSettings::current()->toJs()) ?>;</script>
     <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js?v=5.3.3') ?>"></script>
     <script src="<?= base_url('assets/vendor/htmx/htmx.min.js?v=2.0.4') ?>"></script>
-    <script src="<?= base_url('assets/js/app.js') ?>"></script>
-    <script src="<?= base_url('assets/js/typeahead.js') ?>"></script>
-    <script src="<?= base_url('assets/js/document-items.js') ?>"></script>
-    <script src="<?= base_url('assets/js/cascade-select.js') ?>"></script>
+    <script src="<?= asset_url('assets/js/app.js') ?>"></script>
+    <script src="<?= asset_url('assets/js/typeahead.js') ?>"></script>
+    <script src="<?= asset_url('assets/js/document-items.js') ?>"></script>
+    <script src="<?= asset_url('assets/js/cascade-select.js') ?>"></script>
 
     <?= $this->renderSection('pageStyles') ?>

@@ -8,8 +8,12 @@
  * @var string      $place Place (city) for "Place, date".
  * @var string|null $date  Y-m-d of the signature date.
  * @var string|null $qr    Verification QR (data URI) or null.
+ * @var string|null $verifyCode Verification code printed under the QR ("K7Q2-M9XD").
+ * @var string|null $verifyPage Page where the code can be typed (host/verify, without scheme).
  */
 $qr ??= null;
+$verifyCode ??= null;
+$verifyPage ??= null;
 $qrWidth = $qr !== null ? 20 : 0;
 $width   = (int) floor((100 - $qrWidth) / max(1, count($blocks)));
 $when    = trim(($place !== '' ? $place . ', ' : '') . format_date_id($date ?? date('Y-m-d')));
@@ -20,6 +24,9 @@ $when    = trim(($place !== '' ? $place . ', ' : '') . format_date_id($date ?? d
             <td style="width: <?= $qrWidth ?>%; vertical-align: bottom" class="small muted">
                 <img src="<?= $qr ?>" alt="" style="width: 54pt; height: 54pt"><br>
                 Pindai untuk verifikasi keaslian dokumen
+                <?php if ($verifyCode !== null) : ?>
+                    <br>atau buka <?= esc((string) $verifyPage) ?><br>kode: <span class="bold mono" style="font-size: 8pt; color: #1f2a30"><?= esc($verifyCode) ?></span>
+                <?php endif ?>
             </td>
         <?php endif ?>
         <?php foreach ($blocks as $i => $b) : ?>

@@ -47,7 +47,7 @@ $shipping = trim(($note['shipment_name'] ?? '') . ($note['courier_name'] ? ' · 
 <p class="small" style="margin: 10pt 0 0">Barang telah diperiksa dan diterima dalam keadaan baik dan lengkap. Keluhan setelah barang diterima tidak dapat dilayani kecuali dicatat pada surat jalan ini.</p>
 
 <div class="keep">
-    <?= pdf_part('signatures', ['qr' => $qr, 'place' => $place, 'date' => $note['ship_date'], 'blocks' => [
+    <?= pdf_part('signatures', ['qr' => $qr, 'verifyCode' => $verifyCode ?? null, 'verifyPage' => $verifyPage ?? null, 'place' => $place, 'date' => $note['ship_date'], 'blocks' => [
         ['title' => 'Penerima', 'position' => $customer['cl_organization_name'], 'name' => (string) ($note['received_by_name'] ?? '')],
         ['title' => 'Pengemudi / kurir', 'position' => (string) ($note['courier_name'] ?? ''), 'name' => ''],
         ['title' => 'Pengirim', 'position' => $company['company_name'], 'name' => $company['signatory_name'] ?? ''],

@@ -3,6 +3,8 @@
  * Public document verification page (Indonesian, like the printed documents).
  *
  * @var array{type: string, rows: array<string, string>, valid: bool, status: string}|null $summary
+ * @var bool        $formOnly Only the code form (GET verify without a code).
+ * @var string|null $code     Code typed by the visitor (null when opened from the QR code).
  * @var string      $company Store name.
  * @var string|null $logo    Store logo data URI.
  */
@@ -17,7 +19,7 @@
     <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon-64.png') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css?v=5.3.3') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=1.11.3') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('assets/css/app.css') ?>">
 </head>
 <body class="auth-area d-flex flex-column min-vh-100">
 <main class="container py-5 flex-grow-1" style="max-width: 560px">
@@ -27,6 +29,22 @@
         <div class="small text-body-secondary">Verifikasi keaslian dokumen</div>
     </div>
 
+    <?php $formOnly ??= false; $code ??= null; ?>
+    <?php if ($formOnly || $code !== null) : ?>
+        <form method="get" action="<?= site_url('verify') ?>" class="card shadow-sm mb-3">
+            <div class="card-body">
+                <label for="code" class="form-label fw-semibold">Kode verifikasi</label>
+                <div class="input-group input-group-lg">
+                    <input type="text" class="form-control font-monospace text-uppercase" id="code" name="code" value="<?= esc((string) $code, 'attr') ?>"
+                           placeholder="XXXX-XXXX" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" required<?= $formOnly ? ' autofocus' : '' ?>>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i><span class="visually-hidden">Periksa</span></button>
+                </div>
+                <div class="form-text">Kode 8 karakter yang tercetak di bawah kode QR pada dokumen, misalnya <span class="font-monospace text-nowrap">K7Q2-M9XD</span>.</div>
+            </div>
+        </form>
+    <?php endif ?>
+
+    <?php if (! $formOnly) : ?>
     <div class="card shadow-sm">
         <?php if ($summary === null) : ?>
             <div class="card-body text-center py-4">
@@ -56,6 +74,10 @@
             <div class="card-footer bg-white small text-body-secondary">Data di atas diambil langsung dari sistem pada <?= esc(format_date_id(date('Y-m-d'))) ?>. Bandingkan dengan dokumen yang Anda terima.</div>
         <?php endif ?>
     </div>
+    <?php endif ?>
+    <?php if ($code === null && ! $formOnly) : ?>
+        <p class="text-center small mt-3"><a href="<?= site_url('verify') ?>">Periksa dokumen lain dengan kode</a></p>
+    <?php endif ?>
 </main>
 </body>
 </html>

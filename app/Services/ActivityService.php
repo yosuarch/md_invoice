@@ -147,7 +147,7 @@ final class ActivityService
     public static function canEdit(array $activity, int $userId): bool
     {
         return (int) $activity['created_by'] === $userId || (int) ($activity['assigned_to'] ?? 0) === $userId
-            || (auth()->user()?->can('records.view_all') === true && auth()->user()?->inGroup('admin') === true);
+            || (auth()->user()?->can('records.view_all') === true && auth()->user()?->inGroup('app_admin', 'admin') === true);
     }
 
     /**

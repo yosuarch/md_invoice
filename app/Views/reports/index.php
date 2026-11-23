@@ -45,6 +45,15 @@
             </div>
         </div>
     </div>
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5"><i class="bi bi-stopwatch me-1"></i><?= lang('Reports.leadTime') ?></h2>
+                <p class="small text-body-secondary"><?= lang('Reports.leadTimeText') ?></p>
+                <a href="<?= site_url('reports/lead-time') ?>" class="btn btn-primary btn-sm"><?= lang('Reports.openReport') ?></a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <?= $this->endSection() ?>

@@ -29,7 +29,7 @@ final class AccessAndNegotiationTest extends AppTestCase
     {
         parent::setUp();
 
-        $this->admin   = $this->createUser('admin');
+        $this->admin   = $this->createUser('app_admin');
         $this->product = $this->createProduct();
     }
 

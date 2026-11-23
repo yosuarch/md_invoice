@@ -143,5 +143,5 @@ $size    = static fn (int $bytes): string => $bytes >= 1048576 ? number_format($
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/backups.js') ?>"></script>
+<script src="<?= asset_url('assets/js/backups.js') ?>"></script>
 <?= $this->endSection() ?>

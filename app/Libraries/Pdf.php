@@ -20,11 +20,13 @@ final class Pdf
      *
      * @param string               $view   View name, e.g. 'pdf/invoice'.
      * @param array<string, mixed> $data   View data.
-     * @param string               $footer Text printed left in the footer of every page.
+     * @param string               $footer      Text printed left in the footer of every page.
+     * @param bool                 $pageNumbers Print "Halaman x / y" (false when the document becomes part of a combined report,
+     *                                          which numbers all pages itself).
      *
      * @return string PDF bytes.
      */
-    public static function render(string $view, array $data, string $footer = ''): string
+    public static function render(string $view, array $data, string $footer = '', bool $pageNumbers = true): string
     {
         $cache = WRITEPATH . 'cache/dompdf';
 
@@ -54,7 +56,9 @@ final class Pdf
         $font   = $dompdf->getFontMetrics()->getFont('DejaVu Sans');
         $color  = [0.35, 0.35, 0.35];
         $canvas->page_text(42, 812, $footer, $font, 7, $color);
-        $canvas->page_text(510, 812, 'Halaman {PAGE_NUM} / {PAGE_COUNT}', $font, 7, $color);
+        if ($pageNumbers) {
+            $canvas->page_text(510, 812, 'Halaman {PAGE_NUM} / {PAGE_COUNT}', $font, 7, $color);
+        }
 
         return $dompdf->output();
     }
@@ -73,9 +77,14 @@ final class Pdf
     {
         $name = preg_replace('/[^A-Za-z0-9._-]+/', '-', $filename) . '.pdf';
 
+        $response->removeHeader('Cache-Control');
+
         return $response->setHeader('Content-Type', 'application/pdf')
             ->setHeader('Content-Disposition', ($download ? 'attachment' : 'inline') . '; filename="' . $name . '"')
-            ->setHeader('Cache-Control', 'private, no-store')
+            // Never reuse a stored copy (phones keep showing the draft otherwise); links also carry ?v= (print_url()).
+            ->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, private')
+            ->setHeader('Pragma', 'no-cache')
+            ->setHeader('Expires', '0')
             ->setBody($bytes);
     }
 

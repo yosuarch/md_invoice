@@ -6,6 +6,7 @@
  * @var array{prints: list<array<string, mixed>>, attachments: list<array<string, mixed>>, targets: list<array<string, mixed>>} $files
  * @var string $default  Pre-selected upload target "type:id" (the document of the current page).
  * @var string $returnTo Path to return to after upload/removal (e.g. "proposals/5").
+ * @var string|null $bundleUrl Combined report page of a finished order (OrderBundle), or null.
  */
 
 use App\Services\AttachmentService;
@@ -22,7 +23,12 @@ $maxBytes = AttachmentService::maxBytes();
 <div class="card shadow-sm mb-3" id="files">
     <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
         <span><i class="bi bi-folder2-open me-1"></i><?= lang('Orders.filesTitle') ?></span>
-        <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis"><?= $count ?></span>
+        <span class="d-flex align-items-center gap-2">
+            <?php if (! empty($bundleUrl)) : ?>
+                <a href="<?= esc($bundleUrl, 'attr') ?>" class="btn btn-outline-primary btn-sm"><i class="bi bi-files me-1"></i><?= lang('Bundle.button') ?></a>
+            <?php endif ?>
+            <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis"><?= $count ?></span>
+        </span>
     </div>
     <div class="row g-0">
         <div class="col-12 col-lg-6 border-end-lg">
@@ -35,7 +41,7 @@ $maxBytes = AttachmentService::maxBytes();
                             <a href="<?= esc($p['url'], 'attr') ?>" target="_blank" rel="noopener" class="text-decoration-none small text-truncate<?= $p['muted'] ? ' text-body-secondary' : '' ?>">
                                 <i class="bi bi-<?= esc($p['icon'], 'attr') ?> me-2"></i><?= esc($p['label']) ?>
                             </a>
-                            <a href="<?= esc($p['url'], 'attr') ?>?download=1" hx-boost="false" class="btn btn-link btn-sm py-0" title="<?= esc(lang('App.download'), 'attr') ?>" aria-label="<?= esc(lang('App.download') . ' ' . $p['label'], 'attr') ?>"><i class="bi bi-download"></i></a>
+                            <a href="<?= esc(download_url($p['url']), 'attr') ?>" hx-boost="false" class="btn btn-link btn-sm py-0" title="<?= esc(lang('App.download'), 'attr') ?>" aria-label="<?= esc(lang('App.download') . ' ' . $p['label'], 'attr') ?>"><i class="bi bi-download"></i></a>
                         </li>
                     <?php endforeach ?>
                 </ul>

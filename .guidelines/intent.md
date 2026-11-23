@@ -10,7 +10,9 @@ Dolibarr ERP is the functional role model (third parties with sales representati
 Mostly schools (SD, SMP, SMA, SMK, madrasahs, ...), identified by **NPSN**, school level and **public/private** status. Public schools have government treasurers who collect PPN and may withhold income tax; the **funding source** of a purchase (BOSP, APBD, committee funds, ...) changes which taxes apply. Customers do not log in.
 
 ## Users (staff only)
-- **Admin:** company settings, tax rules, users, lookups; approves proposals and voids invoices.
+- **App Administrator** (developer): users, backups, calculation and numbering settings, audit log; full access as a fallback.
+- **Management:** sees everything and the reports; approves proposals, voids invoices, reverses payments, allows prices below minimum. No data entry.
+- **Administrator:** full business administration (company settings, tax rules, lookups, customers, products, proposals, invoices, payments, deliveries) without approvals.
 - **Sales:** proposals (quotations) for their own schools; keeps their contacts, calls, visits and follow-ups (lean CRM); views their invoices and delivery notes.
 - **Finance:** invoices, payments (including withheld taxes) and credit notes.
 - **Warehouse:** delivery notes (create, ship, track, deliver, cancel) for all schools.

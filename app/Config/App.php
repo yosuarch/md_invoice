@@ -178,9 +178,13 @@ class App extends BaseConfig
      *         '192.168.5.0/24' => 'X-Real-IP',
      *     ]
      *
+     * Production: the app runs behind the openresty reverse proxy on the container network 10.0.0.0/8, which sends the
+     * visitor in X-Forwarded-For (used for the audit log IP and the rate limit of the public verify page).
+     * Without the header (e.g. php spark serve) the direct address is used.
+     *
      * @var array<string, string>
      */
-    public array $proxyIPs = [];
+    public array $proxyIPs = ['10.0.0.0/8' => 'X-Forwarded-For'];
 
     /**
      * --------------------------------------------------------------------------

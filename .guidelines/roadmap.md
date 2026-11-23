@@ -73,11 +73,16 @@
 - [x] Dolibarr-style pricing: tax rate per line (default from the product, changeable on proposals / draft invoices), prices typed excl. or incl. tax, minimum price per product / variant with `prices.override` (2026-11-22).
 - [x] Exact totals for prices typed incl. tax (Dolibarr "TTC") and Settings → Calculation (tax per line / per total, rounding mode, whole rupiah, unit price decimals) (2026-11-23).
 - [x] Backup & restore: Settings → Backups (create, download, delete, restore with safety backup), `php spark backup:create --prune` daily job with retention, `backup:list` / `backup:restore`; DEPLOYMENT.md updated (off-site copy, restore procedure) (2026-11-23).
+- [x] Staff groups split: `app_admin` (developer), `management` (approvals), `admin` (business administration without approvals) (2026-11-23).
 - [ ] Go live: install on the server following `DEPLOYMENT.md` (DBA: protection triggers; daily overdue and backup jobs; off-site copy of the backups).
+- [x] Combined order report: one PDF (cover + index + chosen documents and attachments) for finished orders; uploads limited to PDF and images (2026-11-23).
+- [x] Combined report: continuous page numbers, lead times on the cover, order history appendix, report generation audited; Reports → Lead time (averages, CSV); short verification code under every QR + public code page with rate limit (2026-11-23).
+- [ ] Internet exposure of the public pages only (`.plans/2026-11-23-internet-exposure.md`, after development).
 - [ ] Credit note PDF; proforma / sales order if needed.
 - [ ] Email documents to schools (needs email configuration).
 
 ## Open Questions
+- Idea (needs its own plan): public e-commerce-style catalog as landing page where schools browse products and request a quotation, which then follows the proposal flow. Conflicts with the non-goal "customer self-service portal / customer login" in `intent.md`: decide guest requests vs. customer accounts first.
 - PPN 12% with DPP 11/12: show "DPP nilai lain" separately on invoices, or the effective 11% only? (A PPN 12% rate can now be added in Settings → Tax rates and chosen per line.)
 - Printed documents are Indonesian (decided 2026-11-22, after the store's own invoice sample). Lookup names printed on documents (funding sources, shipment methods) are English seeds; rename them in Settings → Lookups if Indonesian wording is wanted.
 - Document set confirmed: proposal, SPK, invoice, kwitansi, surat jalan, BAST. Not yet: proforma / sales order, purchase order to suppliers (no supplier module), credit note PDF.

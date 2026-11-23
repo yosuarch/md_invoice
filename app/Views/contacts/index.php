@@ -35,7 +35,7 @@ use App\Models\ContactPersonModel;
 
 <div class="card shadow-sm" id="list-results">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 table-stack">
             <thead class="table-dark">
                 <tr>
                     <th><?= lang('Contacts.person') ?></th>

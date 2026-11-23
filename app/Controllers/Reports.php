@@ -10,7 +10,7 @@ use App\Services\Reports as ReportService;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
- * Finance reports: receivables aging and withholding reconciliation (permission reports.view).
+ * Finance reports: receivables aging, withholding reconciliation and lead times (permission reports.view).
  * ?export=csv downloads the rows as CSV for Excel (semicolon separated, decimal comma, UTF-8 with BOM).
  */
 class Reports extends BaseController
@@ -100,6 +100,52 @@ class Reports extends BaseController
         }
 
         return view('reports/withholding', ['report' => $report, 'filters' => $filters, 'from' => $from, 'to' => $to]);
+    }
+
+    /**
+     * Lead times of the orders finished in a period (default: the last 90 days).
+     *
+     * @return ResponseInterface|string
+     */
+    public function leadTime(): ResponseInterface|string
+    {
+        $from = $this->date('from', date('Y-m-d', strtotime('-90 days')));
+        $to   = $this->date('to', date('Y-m-d'));
+
+        if ($from > $to) {
+            [$from, $to] = [$to, $from];
+        }
+
+        $filters = [
+            'q'       => trim((string) $this->request->getGet('q')),
+            'rep'     => (string) $this->request->getGet('rep'),
+            'level'   => (string) $this->request->getGet('level'),
+            'funding' => (string) $this->request->getGet('funding'),
+        ];
+        $report = $this->service()->leadTime($from, $to, $filters);
+
+        if ($this->request->getGet('export') === 'csv') {
+            $steps  = array_keys(\App\Services\LeadTime::STEPS);
+            $days   = static fn (?float $d): string => $d === null ? '' : str_replace('.', ',', (string) $d);
+
+            return $this->csv("lead-time-{$from}-{$to}.csv",
+                array_merge([lang('Reports.csvProposal'), lang('Reports.csvCustomer'), 'NPSN', lang('Reports.csvSalesRep'), lang('Reports.csvFunding'), lang('Reports.csvFinished')],
+                    array_map(static fn (string $s): string => lang('Reports.step_' . $s) . ' (' . lang('Reports.daysUnit') . ')', $steps)),
+                array_map(static fn (array $r): array => array_merge(
+                    [$r['cpl_id'], up($r['customer_name']), $r['npsn'], up($r['rep_name']), $r['funding_source_name'], substr((string) $r['finished'], 0, 10)],
+                    array_map(static fn (string $s): string => $days($r['steps'][$s]['days']), $steps),
+                ), $report['rows']));
+        }
+
+        return view('reports/lead_time', [
+            'report'  => $report,
+            'filters' => $filters,
+            'from'    => $from,
+            'to'      => $to,
+            'reps'    => $this->scope()->seesAll() ? (new SalesRepModel())->activeOptions() : [],
+            'levels'  => (new \App\Models\SchoolLevelModel())->options(),
+            'funding' => (new FundingSourceModel())->options(),
+        ]);
     }
 
     /**

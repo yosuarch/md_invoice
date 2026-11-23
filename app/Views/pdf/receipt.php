@@ -62,7 +62,7 @@ $row   = static fn (string $label, string $value): string => '<tr><td class="mut
     </tr>
 </table>
 
-<?= pdf_part('signatures', ['qr' => $qr, 'place' => $place, 'date' => $payment['payment_date'], 'blocks' => [
+<?= pdf_part('signatures', ['qr' => $qr, 'verifyCode' => $verifyCode ?? null, 'verifyPage' => $verifyPage ?? null, 'place' => $place, 'date' => $payment['payment_date'], 'blocks' => [
     ['spacer' => true],
     ['title' => 'Yang menerima,', 'position' => $company['company_name'], 'name' => $company['signatory_name'] ?? '', 'stamp' => $stampDuty],
 ]]) ?>

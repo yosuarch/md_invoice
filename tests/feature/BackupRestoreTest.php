@@ -45,7 +45,7 @@ final class BackupRestoreTest extends AppTestCase
 
     public function testBackupAndRestoreRoundTrip(): void
     {
-        $admin    = $this->createUser('admin');
+        $admin    = $this->createUser('app_admin');
         $customer = $this->createCustomer();
         $product  = $this->createProduct('GOODS', '190000');
         $this->approvedProposal($customer, [['product_id' => $product, 'quantity' => '150', 'unit_price' => '190000', 'price_base' => 'INCL']], $admin);
@@ -115,7 +115,7 @@ final class BackupRestoreTest extends AppTestCase
     {
         $users = new \CodeIgniter\Shield\Models\UserModel();
 
-        $this->assertTrue($users->findById($this->createUser('admin'))->can('backups.manage', 'backups.restore'));
+        $this->assertTrue($users->findById($this->createUser('app_admin'))->can('backups.manage', 'backups.restore'));
 
         foreach (['sales', 'finance', 'warehouse'] as $group) {
             $user = $users->findById($this->createUser($group));

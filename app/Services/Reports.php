@@ -11,7 +11,8 @@ use App\Models\InvoiceModel;
  * - receivables(): open invoices with aging buckets by days past due, per customer;
  * - withholding(): expected treasurer withholding (invoice_withholding) against what was recorded with payments
  *   (payment_withholding of payments that are not reversed), to reconcile bukti potong / NTPN.
- * Both respect AccessScope (admin and finance see everything).
+ * - leadTime(): lead times per step of the orders finished in a period (LeadTime).
+ * All respect AccessScope (admin and finance see everything).
  */
 final class Reports
 {
@@ -256,5 +257,62 @@ final class Reports
             'proofs'         => $proofs,
             'state'          => $state,
         ];
+    }
+
+    /**
+     * Lead times of the orders finished in a period (paid in full and, with goods, delivered): per step the average,
+     * median, minimum and maximum in seconds (format with LeadTime::parts()), plus one row per order (slowest total first).
+     *
+     * @param string                                                          $from    Y-m-d (finished on or after).
+     * @param string                                                          $to      Y-m-d (finished on or before).
+     * @param array{q?: string, rep?: string, level?: string, funding?: string} $filters
+     *
+     * @return array{rows: list<array<string, mixed>>, stats: array<string, array{count: int, avg: ?float, median: ?float, min: ?float, max: ?float}>}
+     */
+    public function leadTime(string $from, string $to, array $filters = []): array
+    {
+        $model = (new \App\Models\ProposalModel())->withDetails()
+            ->select('customer_list.school_level_id')
+            ->where('client_proposal_status.code', ProposalWorkflow::STORE_APPROVE);
+
+        $q = trim((string) ($filters['q'] ?? ''));
+
+        if ($q !== '') {
+            $model->groupStart()->like('client_proposal_list.cpl_id', $q)->orLike('customer_list.cl_organization_name', $q)->orLike('customer_list.npsn', $q)->groupEnd();
+        }
+
+        foreach (['rep' => 'client_proposal_list.sales_rep_id', 'level' => 'customer_list.school_level_id', 'funding' => 'client_proposal_list.funding_source_id'] as $key => $column) {
+            if ((int) ($filters[$key] ?? 0) > 0) {
+                $model->where($column, (int) $filters[$key]);
+            }
+        }
+
+        $proposals = [];
+
+        foreach ($this->scope->proposals($model)->findAll() as $p) {
+            $proposals[(int) $p['id']] = $p;
+        }
+
+        $rows = [];
+
+        foreach ((new LeadTime())->timestamps(array_keys($proposals)) as $pid => $ts) {
+            $finished = LeadTime::finished($ts);
+
+            if ($finished === null || substr($finished, 0, 10) < $from || substr($finished, 0, 10) > $to) {
+                continue;
+            }
+
+            $rows[] = $proposals[$pid] + ['finished' => $finished, 'has_goods' => (bool) $ts['has_goods'], 'steps' => LeadTime::durations($ts)];
+        }
+
+        usort($rows, static fn (array $a, array $b): int => ($b['steps']['total']['seconds'] ?? 0) <=> ($a['steps']['total']['seconds'] ?? 0));
+
+        $stats = [];
+
+        foreach (array_keys(LeadTime::STEPS) as $step) {
+            $stats[$step] = LeadTime::stats(array_map(static fn (array $r): ?float => $r['steps'][$step]['seconds'] === null ? null : (float) $r['steps'][$step]['seconds'], $rows)); // in seconds
+        }
+
+        return ['rows' => $rows, 'stats' => $stats];
     }
 }

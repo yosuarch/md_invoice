@@ -112,8 +112,12 @@ return [
     'docType_SKU' => 'SKU produk',
 
     // User groups (Config\AuthGroups)
-    'group_admin' => 'Admin',
-    'groupDesc_admin' => 'Akses penuh: pengaturan, pengguna, persetujuan, void.',
+    'group_app_admin' => 'Administrator Aplikasi',
+    'groupDesc_app_admin' => 'Pengembang / pemilik sistem: pengguna, cadangan, pengaturan perhitungan dan penomoran, log audit; akses penuh sebagai cadangan.',
+    'group_management' => 'Manajemen',
+    'groupDesc_management' => 'Pengawasan: melihat semua data dan laporan; menyetujui penawaran, membatalkan (void) invoice, membalik pembayaran, mengizinkan harga di bawah minimum.',
+    'group_admin' => 'Administrator',
+    'groupDesc_admin' => 'Administrasi bisnis penuh (pelanggan, produk, penawaran, invoice, pembayaran, pengiriman, pengaturan perusahaan) tanpa persetujuan.',
     'group_sales' => 'Sales',
     'groupDesc_sales' => 'Penawaran untuk sekolahnya sendiri; melihat invoice dan surat jalannya.',
     'group_finance' => 'Keuangan',

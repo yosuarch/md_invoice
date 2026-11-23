@@ -19,8 +19,8 @@ $today     = date('Y-m-d');
 $buttons = '';
 
 $buttons = view('components/print_menu', ['items' => [
-    ['label' => 'Surat Jalan ' . $note['delivery_number'], 'url' => site_url("deliveries/{$did}/pdf"), 'icon' => 'truck'],
-    ['label' => 'Berita Acara Serah Terima', 'url' => site_url("deliveries/{$did}/handover"), 'icon' => 'clipboard-check'],
+    ['label' => 'Surat Jalan ' . $note['delivery_number'], 'url' => print_url("deliveries/{$did}/pdf"), 'icon' => 'truck'],
+    ['label' => 'Berita Acara Serah Terima', 'url' => print_url("deliveries/{$did}/handover"), 'icon' => 'clipboard-check'],
 ]]);
 
 if ($isOpen && $canManage) {

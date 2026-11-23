@@ -20,7 +20,8 @@ use Config\Documents;
 /**
  * Public "scan to verify" page (no login): shows the key data of a printed document from the database,
  * so the school can check that a paper or forwarded PDF is genuine and still valid. Indonesian, like the documents.
- * Only reachable with the random token printed in the QR code; shows no more than the document itself.
+ * Only reachable with the random token printed in the QR code, or the short code printed under it (GET verify, form);
+ * shows no more than the document itself. Rate limited per IP (VerifyThrottle filter).
  */
 class Verify extends BaseController
 {
@@ -33,19 +34,50 @@ class Verify extends BaseController
      */
     public function show(string $token): string
     {
-        $doc     = (new DocumentVerification())->resolve($token);
+        return $this->page((new DocumentVerification())->resolve($token), null);
+    }
+
+    /**
+     * Code form (GET verify), and the result for a typed code (GET verify?code=K7Q2-M9XD).
+     *
+     * @return string
+     */
+    public function index(): string
+    {
+        $code = trim((string) $this->request->getGet('code'));
+
+        if ($code === '') {
+            return $this->page(null, '', true);
+        }
+
+        return $this->page((new DocumentVerification())->resolveCode($code), mb_substr($code, 0, 20));
+    }
+
+    /**
+     * Render the verification page.
+     *
+     * @param array{doc_type: string, doc_id: int}|null $doc      Resolved document, or null.
+     * @param string|null                             $code     Typed code (to show it again), or null for QR links.
+     * @param bool                                    $formOnly Show only the code form (no result yet).
+     *
+     * @return string
+     */
+    private function page(?array $doc, ?string $code, bool $formOnly = false): string
+    {
         $summary = $doc !== null ? $this->summary($doc['doc_type'], $doc['doc_id']) : null;
         $profile = (new CompanyProfileModel())->getProfile() ?? [];
         $logo    = ! empty($profile['logo_path']) ? Pdf::imageDataUri(WRITEPATH . 'uploads/' . $profile['logo_path']) : null;
 
-        if ($summary === null) {
+        if ($summary === null && ! $formOnly) {
             $this->response->setStatusCode(404);
         }
 
         return view('verify/show', [
-            'summary' => $summary,
-            'company' => $profile['company_name'] ?? 'Warung Sahabat',
-            'logo'    => $logo ?? Pdf::imageDataUri(FCPATH . config(Documents::class)->defaultStoreLogo),
+            'summary'  => $summary,
+            'formOnly' => $formOnly,
+            'code'     => $code,
+            'company'  => $profile['company_name'] ?? 'Warung Sahabat',
+            'logo'     => $logo ?? Pdf::imageDataUri(FCPATH . config(Documents::class)->defaultStoreLogo),
         ]);
     }
 

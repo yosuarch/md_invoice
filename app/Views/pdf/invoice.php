@@ -100,7 +100,7 @@ $notes    = array_values(array_filter(array_map('trim', preg_split('/\R/', (stri
     <?php if (! empty($invoice['notes'])) : ?><div style="margin-top: 3pt"><?= nl2br(esc($invoice['notes'])) ?></div><?php endif ?>
 <?php endif ?>
 
-<?= pdf_part('signatures', ['qr' => $qr, 'place' => $place, 'date' => $isDraft ? date('Y-m-d') : $invoice['issue_date'], 'blocks' => [
+<?= pdf_part('signatures', ['qr' => $qr, 'verifyCode' => $verifyCode ?? null, 'verifyPage' => $verifyPage ?? null, 'place' => $place, 'date' => $isDraft ? date('Y-m-d') : $invoice['issue_date'], 'blocks' => [
     ['spacer' => true],
     ['title' => $company['company_name'], 'name' => $company['signatory_name'] ?? '', 'position' => $company['signatory_position'] ?? ''],
 ]]) ?>

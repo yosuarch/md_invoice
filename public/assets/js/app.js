@@ -77,10 +77,29 @@
         root.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => bootstrap.Tooltip.getOrCreateInstance(el));
         root.querySelectorAll('.toast[data-autoshow]').forEach((el) => bootstrap.Toast.getOrCreateInstance(el).show());
 
+        // Lists stacked as cards on phones (.table-stack, CSS): every cell gets its column header as label.
+        root.querySelectorAll('table.table-stack').forEach(labelCells);
+
         // Jump to an anchor of the new page (e.g. #files after an upload).
         if (root === document.body && location.hash.length > 1) {
             document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start' });
         }
+    }
+
+    /**
+     * Copy the header text of each column into data-label of its body cells (used by .table-stack on phones).
+     *
+     * @param {HTMLTableElement} table
+     */
+    function labelCells(table) {
+        const heads = [...table.querySelectorAll('thead th')].map((th) => th.textContent.trim());
+        table.querySelectorAll('tbody tr').forEach((tr) => {
+            [...tr.children].forEach((td, i) => {
+                if (td.colSpan === 1 && heads[i] && !td.hasAttribute('data-label')) {
+                    td.setAttribute('data-label', heads[i]);
+                }
+            });
+        });
     }
 
     if (window.htmx) {

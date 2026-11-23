@@ -35,9 +35,17 @@ class AuthGroups extends ShieldAuthGroups
      * @var array<string, array<string, string>>
      */
     public array $groups = [
+        'app_admin' => [
+            'title'       => 'App Administrator',
+            'description' => 'Developer / system owner: users, backups, calculation and numbering settings, audit log; full access as a fallback.',
+        ],
+        'management' => [
+            'title'       => 'Management',
+            'description' => 'Oversight: sees all records and reports; approves proposals, voids invoices, reverses payments, allows prices below minimum.',
+        ],
         'admin' => [
-            'title'       => 'Admin',
-            'description' => 'Full access: settings, users, approvals, voiding.',
+            'title'       => 'Administrator',
+            'description' => 'Full business administration (customers, products, proposals, invoices, payments, deliveries, company settings) without approvals.',
         ],
         'sales' => [
             'title'       => 'Sales',
@@ -62,6 +70,7 @@ class AuthGroups extends ShieldAuthGroups
      */
     public array $permissions = [
         'settings.manage'     => 'Manage company profile, lookups and bank accounts',
+        'settings.system'     => 'Manage calculation and document numbering settings',
         'backups.manage'      => 'Create, download and delete backups',
         'backups.restore'     => 'Restore a backup (replaces all data)',
         'users.manage'        => 'Create, edit, ban staff users and assign roles',
@@ -97,9 +106,31 @@ class AuthGroups extends ShieldAuthGroups
      * --------------------------------------------------------------------
      */
     public array $matrix = [
-        'admin' => [
+        // App Administrator (developer): everything, incl. the system-only tasks and approvals as a fallback.
+        'app_admin' => [
             'settings.*', 'backups.*', 'users.*', 'audit.*', 'records.*', 'customers.*', 'salesreps.*', 'contacts.*', 'crm.*', 'products.*', 'prices.*', 'proposals.*',
             'invoices.*', 'payments.*', 'credit_notes.*', 'deliveries.*', 'reports.*',
+        ],
+        // Management: oversight and approvals, no data entry.
+        'management' => [
+            'records.view_all',
+            'customers.view', 'salesreps.view', 'crm.view',
+            'products.view',
+            'proposals.view', 'proposals.approve',
+            'invoices.view', 'invoices.void',
+            'payments.view', 'payments.reverse',
+            'prices.override',
+            'deliveries.view',
+            'reports.view',
+        ],
+        // Administrator: full business administration; no approvals and no system tasks
+        // (users, backups, calculation / numbering settings, audit log stay with app_admin).
+        'admin' => [
+            'settings.manage', 'records.*', 'customers.*', 'salesreps.*', 'contacts.*', 'crm.*', 'products.*',
+            'proposals.view', 'proposals.manage',
+            'invoices.view', 'invoices.manage',
+            'payments.view', 'payments.record',
+            'credit_notes.*', 'deliveries.*', 'reports.*',
         ],
         // Sales: own schools only (view + contacts + activities; school data, addresses and reps stay with admin).
         'sales' => [

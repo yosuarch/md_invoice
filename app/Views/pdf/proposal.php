@@ -81,7 +81,7 @@ $conditions = array_filter([
 <p style="margin: 8pt 0 0">Demikian penawaran ini kami sampaikan. Atas perhatian dan kerja samanya kami ucapkan terima kasih.</p>
 
 <div class="keep">
-    <?= pdf_part('signatures', ['qr' => $qr, 'place' => $place, 'date' => substr((string) $proposal['created_at'], 0, 10), 'blocks' => [
+    <?= pdf_part('signatures', ['qr' => $qr, 'verifyCode' => $verifyCode ?? null, 'verifyPage' => $verifyPage ?? null, 'place' => $place, 'date' => substr((string) $proposal['created_at'], 0, 10), 'blocks' => [
         ['title' => 'Disetujui oleh', 'name' => $contactName, 'position' => trim(($contact['role_label'] ?? '') . ' ' . $customer['cl_organization_name'])],
         ['title' => 'Hormat kami,', 'name' => $company['signatory_name'] ?? '', 'position' => trim(($company['signatory_position'] ?? '') . ' ' . $company['company_name'])],
     ]]) ?>

@@ -29,7 +29,7 @@ final class InvoiceFlowTest extends AppTestCase
     {
         parent::setUp();
 
-        $this->admin   = $this->createUser('admin');
+        $this->admin   = $this->createUser('app_admin');
         $this->goods   = $this->createProduct('GOODS', '100000');
         $this->service = $this->createProduct('SERVICE', '500000');
     }

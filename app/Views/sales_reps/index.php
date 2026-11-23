@@ -16,7 +16,7 @@ $canManage = user_can('customers.manage');
 
 <div class="card shadow-sm" id="list-results">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 table-stack">
             <thead class="table-dark">
                 <tr>
                     <th><?= lang('Customers.name') ?></th>

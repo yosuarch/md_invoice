@@ -147,5 +147,5 @@ $reasonType = form_value('reason_type');
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/credit-note-form.js') ?>"></script>
+<script src="<?= asset_url('assets/js/credit-note-form.js') ?>"></script>
 <?= $this->endSection() ?>

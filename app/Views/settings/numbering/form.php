@@ -79,5 +79,5 @@ $periods = ['monthly' => lang('Settings.periodMonthly'), 'yearly' => lang('Setti
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/numbering-form.js') ?>"></script>
+<script src="<?= asset_url('assets/js/numbering-form.js') ?>"></script>
 <?= $this->endSection() ?>

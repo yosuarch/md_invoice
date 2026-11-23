@@ -80,7 +80,7 @@ $types = static fn (string $id, string $default): string => '<select class="form
 
 <?php if ($canManage) : ?>
     <div class="modal fade" id="activity-log" tabindex="-1" aria-labelledby="activity-log-title" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
             <form class="modal-content" action="<?= site_url('activities') ?>" method="post">
                 <?= csrf_field() ?>
                 <input type="hidden" name="customer_id" value="<?= (int) $panel['customerId'] ?>">
@@ -130,7 +130,7 @@ $types = static fn (string $id, string $default): string => '<select class="form
     </div>
 
     <div class="modal fade" id="activity-plan" tabindex="-1" aria-labelledby="activity-plan-title" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
             <form class="modal-content" action="<?= site_url('activities') ?>" method="post">
                 <?= csrf_field() ?>
                 <input type="hidden" name="customer_id" value="<?= (int) $panel['customerId'] ?>">

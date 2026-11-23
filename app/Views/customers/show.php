@@ -95,7 +95,7 @@ if ($canManage) {
                 <?php endif ?>
             </div>
             <div class="table-responsive">
-                <table class="table table-sm align-middle mb-0">
+                <table class="table table-sm align-middle mb-0 table-stack">
                     <thead><tr><th class="ps-3"><?= lang('Customers.name') ?></th><th><?= lang('Contacts.role') ?></th><th><?= lang('Customers.phone') ?></th><th><?= lang('Customers.email') ?></th><?php if ($canContacts) : ?><th></th><?php endif ?></tr></thead>
                     <tbody>
                         <?php foreach ($contacts as $p) : ?>

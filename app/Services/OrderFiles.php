@@ -22,7 +22,7 @@ final class OrderFiles
      * @param list<array<string, mixed>> $invoices Invoices with details of the order (incl. void), oldest first.
      *
      * @return array{
-     *     prints: list<array{group: string, label: string, url: string, icon: string, muted: bool}>,
+     *     prints: list<array{group: string, label: string, url: string, icon: string, muted: bool, key: string, kind: string, id: int}>,
      *     attachments: list<array<string, mixed>>,
      *     targets: list<array{type: string, id: int, label: string}>
      * }
@@ -37,12 +37,12 @@ final class OrderFiles
             $pid = (int) $proposal['id'];
             $entities['proposal'][] = $pid;
             $labels['proposal'][$pid] = lang('Orders.proposalNo', [$proposal['cpl_id']]);
-            $prints[] = $this->print(lang('Orders.proposalNo', [$proposal['cpl_id']]), 'Surat Penawaran Harga', "proposals/{$pid}/pdf", 'file-earmark-text', false);
+            $prints[] = $this->print(lang('Orders.proposalNo', [$proposal['cpl_id']]), 'Surat Penawaran Harga', "proposals/{$pid}/pdf", 'file-earmark-text', false, 'proposal', $pid);
 
             $agreement = (new AgreementModel())->forProposal($pid);
 
             if ($agreement !== null) {
-                $prints[] = $this->print(lang('Orders.proposalNo', [$proposal['cpl_id']]), 'Surat Perintah Kerja ' . $agreement['agreement_number'], "proposals/{$pid}/agreement/pdf", 'file-earmark-check', false);
+                $prints[] = $this->print(lang('Orders.proposalNo', [$proposal['cpl_id']]), 'Surat Perintah Kerja ' . $agreement['agreement_number'], "proposals/{$pid}/agreement/pdf", 'file-earmark-check', false, 'agreement', $pid);
             }
         }
 
@@ -54,7 +54,7 @@ final class OrderFiles
 
             $entities['invoice'][] = $iid;
             $labels['invoice'][$iid] = lang('Orders.invoiceNo', [$number]);
-            $prints[] = $this->print($group, $inv['status_code'] === InvoiceWorkflow::DRAFT ? lang('Orders.invoiceDraftPreview') : 'Invoice', "invoices/{$iid}/pdf", 'receipt', $void);
+            $prints[] = $this->print($group, $inv['status_code'] === InvoiceWorkflow::DRAFT ? lang('Orders.invoiceDraftPreview') : 'Invoice', "invoices/{$iid}/pdf", 'receipt', $void, 'invoice', $iid);
 
             foreach ((new PaymentModel())->where('invoice_id', $iid)->orderBy('id')->findAll() as $pay) {
                 $payId = (int) $pay['id'];
@@ -63,7 +63,7 @@ final class OrderFiles
 
                 if (! empty($pay['receipt_number'])) {
                     $reversed = $pay['reversed_at'] !== null;
-                    $prints[] = $this->print($group, 'Kwitansi ' . $pay['receipt_number'] . ($reversed ? ' (' . lang('Orders.reversed') . ')' : ''), "payments/{$payId}/receipt", 'cash-coin', $reversed);
+                    $prints[] = $this->print($group, 'Kwitansi ' . $pay['receipt_number'] . ($reversed ? ' (' . lang('Orders.reversed') . ')' : ''), "payments/{$payId}/receipt", 'cash-coin', $reversed, 'receipt', $payId);
                 }
             }
 
@@ -72,8 +72,8 @@ final class OrderFiles
                 $cancelled = $dn['cancelled_at'] !== null;
                 $entities['delivery_note'][] = $did;
                 $labels['delivery_note'][$did] = lang('Orders.deliveryNo', [$dn['delivery_number']]);
-                $prints[] = $this->print($group, 'Surat Jalan ' . $dn['delivery_number'] . ($cancelled ? ' (' . lang('Orders.cancelled') . ')' : ''), "deliveries/{$did}/pdf", 'truck', $cancelled);
-                $prints[] = $this->print($group, 'Berita Acara Serah Terima ' . ($dn['handover_number'] ?: PrintDocuments::handoverNumber($dn['delivery_number'])), "deliveries/{$did}/handover", 'clipboard-check', $cancelled);
+                $prints[] = $this->print($group, 'Surat Jalan ' . $dn['delivery_number'] . ($cancelled ? ' (' . lang('Orders.cancelled') . ')' : ''), "deliveries/{$did}/pdf", 'truck', $cancelled, 'delivery', $did);
+                $prints[] = $this->print($group, 'Berita Acara Serah Terima ' . ($dn['handover_number'] ?: PrintDocuments::handoverNumber($dn['delivery_number'])), "deliveries/{$did}/handover", 'clipboard-check', $cancelled, 'handover', $did);
             }
         }
 
@@ -101,10 +101,20 @@ final class OrderFiles
     }
 
     /**
-     * @return array{group: string, label: string, url: string, icon: string, muted: bool}
+     * One printable document of the order.
+     *
+     * @param string $group Group heading (proposal / invoice).
+     * @param string $label Document label.
+     * @param string $uri   PDF route path.
+     * @param string $icon  Bootstrap icon name.
+     * @param bool   $muted Cancelled / void / reversed.
+     * @param string $kind  Document kind (OrderBundle::KINDS): proposal, agreement, invoice, receipt, delivery, handover.
+     * @param int    $id    Record id of the kind (proposal, invoice, payment or delivery note id).
+     *
+     * @return array{group: string, label: string, url: string, icon: string, muted: bool, key: string, kind: string, id: int}
      */
-    private function print(string $group, string $label, string $uri, string $icon, bool $muted): array
+    private function print(string $group, string $label, string $uri, string $icon, bool $muted, string $kind, int $id): array
     {
-        return ['group' => $group, 'label' => $label, 'url' => site_url($uri), 'icon' => $icon, 'muted' => $muted];
+        return ['group' => $group, 'label' => $label, 'url' => print_url($uri), 'icon' => $icon, 'muted' => $muted, 'key' => $kind . ':' . $id, 'kind' => $kind, 'id' => $id];
     }
 }

@@ -109,6 +109,52 @@ if (! function_exists('active_badge')) {
     }
 }
 
+if (! function_exists('asset_url')) {
+    /**
+     * URL of an app asset under public/ with its modification time as version (?v=...), so browsers and the reverse
+     * proxy fetch a changed CSS / JS file at once instead of serving a cached copy until it expires.
+     *
+     * @param string $path Path under public/, e.g. "assets/css/app.css".
+     *
+     * @return string
+     */
+    function asset_url(string $path): string
+    {
+        $file = FCPATH . ltrim($path, '/');
+
+        return base_url($path) . (is_file($file) ? '?v=' . filemtime($file) : '');
+    }
+}
+
+if (! function_exists('print_url')) {
+    /**
+     * URL of a printed document (PDF) with a fresh version parameter, so browsers and PDF viewers on phones never
+     * show a copy they opened earlier (e.g. the DRAFT version of a proposal that was sent since).
+     *
+     * @param string $path Route path, e.g. "proposals/5/pdf".
+     *
+     * @return string
+     */
+    function print_url(string $path): string
+    {
+        return site_url($path) . '?v=' . time();
+    }
+}
+
+if (! function_exists('download_url')) {
+    /**
+     * Download variant of a document URL (adds download=1 with the right separator).
+     *
+     * @param string $url Document URL, with or without a query string.
+     *
+     * @return string
+     */
+    function download_url(string $url): string
+    {
+        return $url . (str_contains($url, '?') ? '&' : '?') . 'download=1';
+    }
+}
+
 if (! function_exists('user_can')) {
     /**
      * Whether the logged-in user has a Shield permission.

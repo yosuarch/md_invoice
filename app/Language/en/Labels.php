@@ -113,8 +113,12 @@ return [
     'docType_SKU' => 'Product SKU',
 
     // User groups (Config\AuthGroups)
-    'group_admin' => 'Admin',
-    'groupDesc_admin' => 'Full access: settings, users, approvals, voiding.',
+    'group_app_admin' => 'App Administrator',
+    'groupDesc_app_admin' => 'Developer / system owner: users, backups, calculation and numbering settings, audit log; full access as a fallback.',
+    'group_management' => 'Management',
+    'groupDesc_management' => 'Oversight: sees all records and reports; approves proposals, voids invoices, reverses payments, allows prices below minimum.',
+    'group_admin' => 'Administrator',
+    'groupDesc_admin' => 'Full business administration (customers, products, proposals, invoices, payments, deliveries, company settings) without approvals.',
     'group_sales' => 'Sales',
     'groupDesc_sales' => 'Proposals (quotations) for their own schools; views their invoices and delivery notes.',
     'group_finance' => 'Finance',

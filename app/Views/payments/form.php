@@ -185,5 +185,5 @@ $whErrors = array_filter($errors, static fn ($k) => str_starts_with((string) $k,
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/payment-form.js') ?>"></script>
+<script src="<?= asset_url('assets/js/payment-form.js') ?>"></script>
 <?= $this->endSection() ?>

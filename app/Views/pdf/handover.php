@@ -67,7 +67,7 @@ if ($approver !== null) {
 Demikian berita acara ini dibuat dengan sebenarnya dalam rangkap 2 (dua) untuk dipergunakan sebagaimana mestinya.</p>
 
 <div class="keep">
-    <?= pdf_part('signatures', ['qr' => $qr, 'place' => $place, 'date' => $handoverDate, 'blocks' => $blocks]) ?>
+    <?= pdf_part('signatures', ['qr' => $qr, 'verifyCode' => $verifyCode ?? null, 'verifyPage' => $verifyPage ?? null, 'place' => $place, 'date' => $handoverDate, 'blocks' => $blocks]) ?>
 </div>
 
 <?= $this->endSection() ?>

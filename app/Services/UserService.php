@@ -154,14 +154,14 @@ final class UserService
      *
      * @return void
      *
-     * @throws RuntimeException When an admin tries to remove their own admin role.
+     * @throws RuntimeException When an app administrator tries to remove their own app_admin role.
      */
     public function update(int $id, array $data, int $editor): void
     {
         $user              = $this->findOrFail($id);
         $data['full_name'] = normalize_name((string) ($data['full_name'] ?? ''));
 
-        if ($id === $editor && $user->inGroup('admin') && ! in_array('admin', $data['groups'], true)) {
+        if ($id === $editor && $user->inGroup('app_admin') && ! in_array('app_admin', $data['groups'], true)) {
             throw new RuntimeException(lang('Messages.ownAdminRole'));
         }
 
@@ -203,7 +203,7 @@ final class UserService
      *
      * @return void
      *
-     * @throws RuntimeException When banning yourself or the last active admin.
+     * @throws RuntimeException When banning yourself or the last active app administrator.
      */
     public function setBanned(int $id, bool $ban, int $editor): void
     {
@@ -213,7 +213,7 @@ final class UserService
             throw new RuntimeException(lang('Messages.ownAccount'));
         }
 
-        if ($ban && $user->inGroup('admin') && $this->activeAdminCount() <= 1) {
+        if ($ban && $user->inGroup('app_admin') && $this->activeAdminCount() <= 1) {
             throw new RuntimeException(lang('Messages.lastAdmin'));
         }
 
@@ -251,13 +251,13 @@ final class UserService
     }
 
     /**
-     * Number of admins who are not banned.
+     * Number of app administrators (the group that manages users) who are not banned.
      */
     private function activeAdminCount(): int
     {
         return db_connect()->table('auth_groups_users g')
             ->join('users u', 'u.id = g.user_id')
-            ->where('g.group', 'admin')
+            ->where('g.group', 'app_admin')
             ->where('u.deleted_at', null)
             ->groupStart()->where('u.status', null)->orWhere('u.status !=', 'banned')->groupEnd()
             ->countAllResults();

@@ -38,13 +38,20 @@ if ($proposal['status_code'] === ProposalWorkflow::STORE_APPROVE && user_can('pr
         . esc($agreement === null ? lang('Proposals.createSpk') : lang('Proposals.editSpk')) . '</a>';
 }
 
-$printItems = [['label' => 'Surat Penawaran Harga', 'url' => site_url("proposals/{$pid}/pdf")]];
+$printItems = [['label' => 'Surat Penawaran Harga', 'url' => print_url("proposals/{$pid}/pdf")]];
 
 if ($agreement !== null) {
-    $printItems[] = ['label' => 'Surat Perintah Kerja ' . $agreement['agreement_number'], 'url' => site_url("proposals/{$pid}/agreement/pdf"), 'icon' => 'file-earmark-check'];
+    $printItems[] = ['label' => 'Surat Perintah Kerja ' . $agreement['agreement_number'], 'url' => print_url("proposals/{$pid}/agreement/pdf"), 'icon' => 'file-earmark-check'];
 }
 
 $buttons .= view('components/print_menu', ['items' => $printItems]);
+
+// Finished order: one PDF with all documents and attachments (OrderBundle).
+$bundleUrl = \App\Services\OrderFlow::isComplete($flow) ? site_url("proposals/{$pid}/bundle") : null;
+
+if ($bundleUrl !== null) {
+    $buttons .= '<a href="' . $bundleUrl . '" class="btn btn-outline-primary"><i class="bi bi-files me-1"></i>' . esc(lang('Bundle.button')) . '</a>';
+}
 
 /**
  * Display name of a user row from the history.
@@ -203,7 +210,7 @@ $userName = static fn (array $row): string => (string) ($row['full_name'] ? up($
     </div>
 </div>
 
-<?= view('components/order_files', ['files' => $flow['files'], 'default' => "proposal:{$pid}", 'returnTo' => "proposals/{$pid}"]) ?>
+<?= view('components/order_files', ['files' => $flow['files'], 'default' => "proposal:{$pid}", 'returnTo' => "proposals/{$pid}", 'bundleUrl' => $bundleUrl]) ?>
 
 <?php foreach ($actions as $to => $a) : ?>
     <div class="modal fade" id="status-<?= esc($to, 'attr') ?>" tabindex="-1" aria-labelledby="status-<?= esc($to, 'attr') ?>-title" aria-hidden="true">

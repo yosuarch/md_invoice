@@ -83,7 +83,7 @@ $row = static fn (string $label, string $value): string => '<tr><td class="muted
 <p style="margin: 8pt 0 0">Demikian Surat Perintah Kerja ini dibuat dalam rangkap 2 (dua) dan ditandatangani oleh kedua belah pihak untuk dilaksanakan sebagaimana mestinya.</p>
 
 <div class="keep">
-    <?= pdf_part('signatures', ['qr' => $qr, 'place' => $place, 'date' => $agreement['agreement_date'], 'blocks' => [
+    <?= pdf_part('signatures', ['qr' => $qr, 'verifyCode' => $verifyCode ?? null, 'verifyPage' => $verifyPage ?? null, 'place' => $place, 'date' => $agreement['agreement_date'], 'blocks' => [
         ['title' => 'PIHAK KEDUA (Pemesan)', 'position' => trim(($agreement['client_signatory_position'] ?? '') . ' ' . $customer['cl_organization_name']), 'name' => $agreement['client_signatory_name'], 'extra' => ! empty($agreement['client_signatory_nip']) ? 'NIP ' . $agreement['client_signatory_nip'] : '', 'stamp' => $stamp],
         ['title' => 'PIHAK PERTAMA (Penyedia)', 'position' => trim(($agreement['store_signatory_position'] ?? '') . ' ' . $company['company_name']), 'name' => $agreement['store_signatory_name'], 'stamp' => $stamp],
     ]]) ?>

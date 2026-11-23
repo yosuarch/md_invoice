@@ -214,5 +214,5 @@ $options = static function (array $options, string $field) use ($invoice): strin
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/invoice-form.js') ?>"></script>
+<script src="<?= asset_url('assets/js/invoice-form.js') ?>"></script>
 <?= $this->endSection() ?>

@@ -62,7 +62,7 @@ final class PrintDocuments
                 ProposalWorkflow::CANCEL_BY_CLIENT, ProposalWorkflow::CANCEL_BY_STORE => 'BATAL',
                 default                                                          => null,
             },
-        ], 'Penawaran ' . $number);
+        ], 'Penawaran ' . $number . ((int) ($proposal['revision_no'] ?? 0) >= 2 ? ' rev' . (int) $proposal['revision_no'] : ''));
     }
 
     /**
@@ -175,6 +175,54 @@ final class PrintDocuments
         return $this->result('pdf/handover', 'BAST', $id, $number, $data + [
             'handoverDate' => substr((string) $date, 0, 10),
         ], 'BAST ' . $number);
+    }
+
+    /**
+     * Cover and index of the combined order report (OrderBundle).
+     *
+     * @param int                        $proposalId Proposal id.
+     * @param array<string, mixed>|null  $invoice    Active invoice with details (paid), or null.
+     * @param list<array<string, mixed>> $parts      Index rows: title, group, page (start page), pages, merged (bool).
+     * @param array<string, string|null> $dates      paid / delivered dates (Y-m-d) or null.
+     * @param array<string, array{from: ?string, to: ?string, days: ?float}> $leadTimes LeadTime::durations() of the order.
+     * @param bool                       $hasGoods   The order has goods (delivery steps apply).
+     *
+     * @return array{view: string, data: array<string, mixed>, filename: string, footer: string}
+     */
+    public function bundleCover(int $proposalId, ?array $invoice, array $parts, array $dates, array $leadTimes = [], bool $hasGoods = true): array
+    {
+        $proposal = (new ProposalModel())->withDetails()->find($proposalId) ?? throw PageNotFoundException::forPageNotFound();
+        $number   = $proposal['cpl_id'];
+
+        return $this->result('pdf/order_bundle', 'QUO', $proposalId, $number, [
+            'proposal'  => $proposal,
+            'invoice'   => $invoice,
+            'customer'  => $this->customer((int) $proposal['customer_id']),
+            'parts'     => $parts,
+            'dates'     => $dates,
+            'leadTimes' => $leadTimes,
+            'hasGoods'  => $hasGoods,
+            'watermark' => null,
+        ], 'Laporan ' . $number, false);
+    }
+
+    /**
+     * "Riwayat pesanan" appendix of the combined order report (OrderTimeline).
+     *
+     * @param int $proposalId Proposal id.
+     *
+     * @return array{view: string, data: array<string, mixed>, filename: string, footer: string}
+     */
+    public function orderTimeline(int $proposalId): array
+    {
+        $proposal = (new ProposalModel())->withDetails()->find($proposalId) ?? throw PageNotFoundException::forPageNotFound();
+        $number   = $proposal['cpl_id'];
+
+        return $this->result('pdf/order_timeline', 'QUO', $proposalId, $number, [
+            'proposal'  => $proposal,
+            'events'    => (new OrderTimeline())->forProposal($proposalId),
+            'watermark' => null,
+        ], 'Riwayat ' . $number, false);
     }
 
     /**
@@ -319,9 +367,13 @@ final class PrintDocuments
                 'groupLogo' => Pdf::imageDataUri(FCPATH . $config->groupLogo),
                 'verifyUrl' => $url,
                 'qr'        => $url !== null ? DocumentVerification::qrDataUri($url) : null,
+                // Short code under the QR, typed on the public page GET verify (host without scheme, e.g. "invoice.example.id/verify").
+                'verifyCode' => $url !== null ? DocumentVerification::formatCode($this->verification->codeFor($type, $docId)) : null,
+                'verifyPage' => $url !== null ? (string) preg_replace('#^https?://#', '', site_url('verify')) : null,
                 'place'     => $profile['document_city'] ?? '',
             ],
-            'filename' => $filename,
+            // The state is part of the name, so a saved draft never has the name of the final document.
+            'filename' => $filename . (! empty($data['watermark']) ? ' ' . $data['watermark'] : ''),
             'footer'   => $company . ' · bagian dari grup ' . $config->groupName . ' · ' . $number,
         ];
     }

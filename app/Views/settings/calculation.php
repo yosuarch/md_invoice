@@ -97,5 +97,5 @@ $exampleRows = static fn (array $result): string => '<tr><td>' . esc(lang('Setti
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/calculation-form.js') ?>"></script>
+<script src="<?= asset_url('assets/js/calculation-form.js') ?>"></script>
 <?= $this->endSection() ?>

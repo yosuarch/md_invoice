@@ -35,6 +35,24 @@ final class OrderFlow
     }
 
     /**
+     * Whether the order is finished: proposal approved, invoice issued, paid in full and every good delivered
+     * (or no goods to deliver). Used to offer the combined order report (OrderBundle).
+     *
+     * @param array{steps: list<array{key: string, state: string}>} $flow Result of forProposal() / forInvoice().
+     *
+     * @return bool
+     */
+    public static function isComplete(array $flow): bool
+    {
+        $states = array_column($flow['steps'] ?? [], 'state', 'key');
+
+        return ($states['proposal'] ?? null) === 'done'
+            && ($states['invoice'] ?? null) === 'done'
+            && ($states['payment'] ?? null) === 'done'
+            && in_array($states['delivery'] ?? null, ['done', 'skipped'], true);
+    }
+
+    /**
      * Order flow of an invoice (and the proposal it came from, with its other invoices).
      *
      * @param int $invoiceId Invoice id.

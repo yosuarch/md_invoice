@@ -28,7 +28,7 @@ final class ReportsTest extends AppTestCase
 
     public function testReceivablesAndWithholdingReconciliation(): void
     {
-        $admin   = $this->createUser('admin');
+        $admin   = $this->createUser('app_admin');
         $product = $this->createProduct();
         $inv     = $this->issuedInvoice($this->createCustomer(), [['product_id' => $product, 'quantity' => '30', 'unit_price' => '100000']], $admin);
         $id      = (int) $inv['id'];

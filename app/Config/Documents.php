@@ -61,7 +61,8 @@ class Documents extends BaseConfig
 
     /**
      * Allowed attachment extensions => MIME types accepted for them (detected from the file content with fileinfo).
-     * Office files are sometimes detected as generic zip / CDF containers, so those are accepted for them.
+     * PDF and images only, so every attachment can be joined into the combined order report (OrderBundle).
+     * Older Word / Excel attachments stay downloadable but are not offered for the report.
      *
      * @var array<string, list<string>>
      */
@@ -71,9 +72,5 @@ class Documents extends BaseConfig
         'jpeg' => ['image/jpeg'],
         'png'  => ['image/png'],
         'webp' => ['image/webp'],
-        'doc'  => ['application/msword', 'application/CDFV2', 'application/x-ole-storage'],
-        'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'],
-        'xls'  => ['application/vnd.ms-excel', 'application/CDFV2', 'application/x-ole-storage'],
-        'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/zip'],
     ];
 }

@@ -75,7 +75,7 @@ if ($can['deliver'] && $toShip && in_array($status, \App\Services\DeliveryServic
     $buttons .= '<a href="' . site_url("invoices/{$iid}/deliveries/new") . '" class="btn btn-outline-primary"><i class="bi bi-truck me-1"></i>' . esc(lang('Invoices.deliveryNote')) . '</a>';
 }
 
-$buttons .= view('components/print_menu', ['items' => [['label' => $isDraft ? lang('Orders.invoiceDraftPreview') : lang('Invoices.invoiceNo', [$number]), 'url' => site_url("invoices/{$iid}/pdf")]]]);
+$buttons .= view('components/print_menu', ['items' => [['label' => $isDraft ? lang('Orders.invoiceDraftPreview') : lang('Invoices.invoiceNo', [$number]), 'url' => print_url("invoices/{$iid}/pdf")]]]);
 
 if ($payable && $can['void'] && ! $settled) {
     $buttons .= '<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#void-modal"><i class="bi bi-slash-circle me-1"></i>' . esc(lang('Invoices.void')) . '</button>';
@@ -304,7 +304,7 @@ if ($payable && $can['void'] && ! $settled) {
                                     <td class="small">
                                         <?= esc($p['method_name']) ?><?= $p['bank_name'] ? ' · ' . esc(up($p['bank_name'])) : '' ?><?= $p['reference_number'] ? ' · <span class="font-monospace">' . esc($p['reference_number']) . '</span>' : '' ?>
                                         <div class="text-body-secondary"><?= esc(lang('Invoices.recordedBy', [$rowUser($p)])) ?><?= $p['note'] ? ' · ' . esc($p['note']) : '' ?>
-                                            · <a href="<?= site_url('payments/' . $p['id'] . '/receipt') ?>" target="_blank" rel="noopener"><i class="bi bi-receipt-cutoff me-1"></i>Kwitansi<?= $p['receipt_number'] ? ' ' . esc($p['receipt_number']) : '' ?></a></div>
+                                            · <a href="<?= print_url('payments/' . $p['id'] . '/receipt') ?>" target="_blank" rel="noopener"><i class="bi bi-receipt-cutoff me-1"></i>Kwitansi<?= $p['receipt_number'] ? ' ' . esc($p['receipt_number']) : '' ?></a></div>
                                         <?php if ($reversed) : ?>
                                             <div class="text-danger-emphasis"><span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle"><?= lang('Invoices.reversed') ?></span>
                                                 <?= esc(lang('Invoices.reversedBy', [format_date($p['reversed_at'], true), $revUser($p)])) ?> <?= esc($p['reversal_reason']) ?></div>
@@ -441,7 +441,8 @@ if ($payable && $can['void'] && ! $settled) {
 
 <?php if (! empty($activityPanel)) : ?><?= view('components/activity_panel', ['panel' => $activityPanel], ['saveData' => false]) ?><?php endif ?>
 
-<?= view('components/order_files', ['files' => $flow['files'], 'default' => "invoice:{$iid}", 'returnTo' => "invoices/{$iid}"]) ?>
+<?= view('components/order_files', ['files' => $flow['files'], 'default' => "invoice:{$iid}", 'returnTo' => "invoices/{$iid}",
+    'bundleUrl' => $invoice['proposal_id'] && \App\Services\OrderFlow::isComplete($flow) ? site_url('proposals/' . (int) $invoice['proposal_id'] . '/bundle') : null]) ?>
 
 <?php if ($isDraft && $can['manage']) : ?>
     <div class="modal fade" id="issue-modal" tabindex="-1" aria-labelledby="issue-modal-title" aria-hidden="true">

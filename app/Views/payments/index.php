@@ -45,7 +45,7 @@ $filtered = array_filter($filters) !== [];
 
 <div class="card shadow-sm">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 table-stack">
             <thead class="table-dark">
                 <tr>
                     <th><?= lang('App.date') ?></th>

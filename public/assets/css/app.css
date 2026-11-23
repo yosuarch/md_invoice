@@ -552,3 +552,88 @@ html.is-loading #list-results {
 .item-table [data-name="unit_price"], .item-table .price-base { min-width: 8.5rem; }
 .item-table .line-tax { min-width: 8rem; }
 .item-table [data-name="discount_amount"] { min-width: 6.5rem; }
+
+/* ---- Phones: document lines as stacked cards (components/item_row_template, .item-table) ---- */
+@media (max-width: 767.98px) {
+    .item-table thead { display: none; }
+    .item-table, .item-table tbody, .item-table tr[data-item-row] { display: block; width: 100%; }
+    .item-table tr[data-item-row] {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .5rem .75rem;
+        position: relative;
+        padding: .75rem .75rem .75rem 2rem;
+        border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+    }
+    .item-table tr[data-item-row] > td { display: block; padding: 0; border: 0; min-width: 0; }
+    .item-table tr[data-item-row] > td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-size: .75rem;
+        color: var(--bs-secondary-color);
+        margin-bottom: .125rem;
+        text-align: left;
+    }
+    .item-table .item-line-no { position: absolute; left: .75rem; top: .9rem; }
+    .item-table .item-main { grid-column: 1 / -1; padding-right: 2rem !important; }
+    .item-table .item-remove { position: absolute; right: .5rem; top: .6rem; }
+    .item-table [data-line-total] { grid-column: 1 / -1; font-weight: 600; text-align: right; }
+    .item-table [data-unit] { align-self: end; }
+    .item-table [data-name="unit_price"], .item-table .price-base, .item-table .line-tax, .item-table [data-name="discount_amount"] { min-width: 0; }
+    .item-table input, .item-table select, .item-table textarea { font-size: 1rem; } /* no zoom-in on iOS */
+}
+
+/* ---- Phones: top bar in one row (title shown by the page header; user menu icon only) ---- */
+@media (max-width: 575.98px) {
+    .app-topbar { flex-wrap: nowrap; gap: .5rem; padding-left: .75rem !important; padding-right: .75rem !important; }
+    .app-topbar .page-title { display: none; }
+    .app-topbar .app-search { flex: 1 1 auto; min-width: 0; width: auto; margin-right: 0 !important; }
+    .app-topbar .me-2:has(.language-toggle) { margin-right: 0 !important; }
+    .app-topbar .language-toggle .btn { padding-left: .4rem; padding-right: .4rem; }
+    .app-topbar .dropdown-toggle { padding-left: 0; padding-right: 0; }
+}
+
+/* ---- Phones and portrait tablets: lists as stacked cards (table.table-stack; labels copied from the header by app.js) ---- */
+@media (max-width: 991.98px) {
+    .table-stack thead { display: none; }
+    .table-stack, .table-stack tbody, .table-stack tr, .table-stack td { display: block; width: 100%; }
+    .table-stack tbody tr {
+        padding: .625rem 1rem;
+        border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+    }
+    .table-stack tbody tr > td {
+        display: block;
+        overflow: hidden; /* contains the floated label */
+        padding: .125rem 0;
+        border: 0;
+        text-align: right !important;
+        white-space: normal !important;
+        box-shadow: none !important;
+    }
+    .table-stack tbody tr > td[data-label]::before {
+        content: attr(data-label);
+        float: left;
+        max-width: 45%;
+        margin-right: 1rem;
+        padding-top: .125rem;
+        font-size: .75rem;
+        color: var(--bs-secondary-color);
+        text-align: left;
+        font-weight: 400;
+    }
+    /* First column (number / name) as the card title, without its label. */
+    .table-stack tbody tr > td:first-child { display: block; text-align: left !important; padding-bottom: .25rem; }
+    .table-stack tbody tr > td:first-child::before { display: none; }
+    /* Empty / "no results" rows. */
+    .table-stack tbody tr > td[colspan] { display: block; text-align: center !important; }
+    .table-stack tbody tr > td:empty { display: none; }
+    .table-responsive:has(> .table-stack) { overflow-x: visible; }
+}
+@media (max-width: 767.98px) {
+    .item-table tfoot { display: block; width: 100%; }
+    .item-table tfoot tr { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .125rem .75rem; }
+    .item-table tfoot td { display: block; border: 0; padding: .25rem 0; width: auto; }
+    .item-table tfoot td:empty { display: none; }
+    .item-table tfoot td:first-child { text-align: left !important; }
+    .item-table tbody[data-empty-row], .item-table tbody[data-empty-row] tr, .item-table tbody[data-empty-row] td { display: block; width: 100%; }
+}

@@ -32,16 +32,17 @@ expose_php = Off
 ## 2. Install the code
 
 1. Copy the project to the server, e.g. `/var/www/md-invoice` (Linux) or `D:\apps\md-invoice` (Windows). Do **not** copy `.env`, `writable/logs/*`, `writable/session/*`, `writable/uploads/*`, `writable/backups/*` from a development machine.
-2. Install dependencies without development tools:
+2. Behind a reverse proxy: set `Config\App::$proxyIPs` to the proxy address / network with its client-IP header (default `10.0.0.0/8` → `X-Forwarded-For`), otherwise the audit log records the proxy IP and the public verify rate limit (20 / min per IP) treats all visitors as one.
+3. Install dependencies without development tools (also after every update that changes `composer.lock`, e.g. 2026-11-23: setasign/fpdi + setasign/fpdf for the combined order report):
    ```bash
    composer install --no-dev --optimize-autoloader
    ```
-3. Create `.env` from the template and fill it in:
+4. Create `.env` from the template and fill it in:
    ```bash
    cp env.production.example .env
    php spark key:generate
    ```
-4. Permissions: the web server user (e.g. `www-data`) needs write access to `writable/` (cache, logs, session, uploads, backups) and nothing else. Run the scheduled jobs (§6) as the same user.
+5. Permissions: the web server user (e.g. `www-data`) needs write access to `writable/` (cache, logs, session, uploads, backups) and nothing else. Run the scheduled jobs (§6) as the same user.
    ```bash
    chown -R www-data:www-data writable && chmod -R 775 writable
    ```
@@ -80,7 +81,7 @@ The grants above are also what backups and restores need (SELECT to read, CREATE
 
 ```bash
 php spark shield:user create -n admin -e admin@example.com
-php spark shield:user addgroup -n admin -g admin
+php spark shield:user addgroup -n admin -g app_admin
 php spark shield:user removegroup -n admin -g sales   # new users also get the default group "sales"
 ```
 
@@ -89,7 +90,7 @@ Log in, then in **Settings**:
 2. **Bank accounts**, then choose the default account in Company (printed on invoices).
 3. **Document numbering**: check the formats (invoice, proposal, SKU, ...) **before the first document** is created.
 4. **Lookups → Tax withholding rules**: confirm the rates and thresholds with the tax adviser.
-5. **Users**: create the staff accounts (admin / sales / finance / warehouse) and link sales users to a sales representative; assign schools to the reps.
+5. **Users**: create the staff accounts (app_admin / management / admin / sales / finance / warehouse) and link sales users to a sales representative; assign schools to the reps.
 
 ## 5. Web server
 
@@ -177,11 +178,11 @@ robocopy "C:\apps\md-invoice\writable\backups" "\\nas\backups\md-invoice" /MIR /
 Keep a copy of `.env` (at least `encryption.key` and the database password) in a password manager or safe, separately from the backups.
 
 **Manual backups:**
-- In the app: **Settings → Backups → Create backup now** (admin; list, download and delete are there too).
+- In the app: **Settings → Backups → Create backup now** (app_admin; list, download and delete are there too).
 - On the server: `php spark backup:create --label before-update`, `php spark backup:list`.
 
 **Restore** (replaces ALL data, database and uploaded files, with the backup):
-1. In the app: **Settings → Backups → Restore** on the wanted backup, and type `RESTORE` to confirm (admin only, permission `backups.restore`). Or on the server: `php spark backup:restore <file>` and type the database name to confirm. A backup from another machine is first copied into the backup folder (the web upload limit is too small for backups).
+1. In the app: **Settings → Backups → Restore** on the wanted backup, and type `RESTORE` to confirm (app_admin only, permission `backups.restore`). Or on the server: `php spark backup:restore <file>` and type the database name to confirm. A backup from another machine is first copied into the backup folder (the web upload limit is too small for backups).
 2. The app first makes a **safety backup** of the current data (type "Before restore"). If anything goes wrong, restore that one with `php spark backup:restore <safety file>`.
 3. Everybody is logged out. If the backup came from an older app version, the migrations run automatically; a backup from a newer version is refused (update the code first).
 4. The restore rebuilds all tables, which **removes the protection triggers**: the DBA runs the protection SQL again (§3), then `php spark app:check`.

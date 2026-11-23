@@ -242,7 +242,7 @@ $errors  = form_errors();
 
 <?php if (! $isEdit) : ?>
     <div class="modal fade" id="quick-customer" tabindex="-1" aria-labelledby="quick-customer-title" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down">
             <form class="modal-content" id="quick-customer-form" hx-boost="false" action="<?= site_url('api/customers/quick') ?>" method="post" novalidate>
                 <div class="modal-header">
                     <h5 class="modal-title" id="quick-customer-title"><i class="bi bi-building-add me-1"></i><?= lang('Proposals.quickTitle') ?></h5>
@@ -309,5 +309,5 @@ $errors  = form_errors();
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/proposal-form.js') ?>"></script>
+<script src="<?= asset_url('assets/js/proposal-form.js') ?>"></script>
 <?= $this->endSection() ?>

@@ -11,7 +11,8 @@ service('auth')->routes($routes);
 $routes->post('locale', 'Locale::switch');
 
 // Public "scan to verify" page for printed documents (random token, no login).
-$routes->get('verify/(:segment)', 'Verify::show/$1');
+$routes->get('verify', 'Verify::index', ['filter' => 'verifythrottle']); // type the code printed under the QR
+$routes->get('verify/(:segment)', 'Verify::show/$1', ['filter' => 'verifythrottle']);
 
 /*
  * Everything below requires a logged-in staff user ('session' filter).
@@ -173,12 +174,16 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
     $routes->get('payments/(:num)/receipt', 'Documents::receipt/$1', ['filter' => 'permission:invoices.view']);
     $routes->get('deliveries/(:num)/pdf', 'Documents::deliveryNote/$1', ['filter' => 'permission:deliveries.view']);
     $routes->get('deliveries/(:num)/handover', 'Documents::handover/$1', ['filter' => 'permission:deliveries.view']);
+    // Combined order report of a finished order (picker + one merged PDF)
+    $routes->get('proposals/(:num)/bundle', 'OrderBundles::form/$1', ['filter' => 'permission:proposals.view']);
+    $routes->get('proposals/(:num)/bundle/pdf', 'OrderBundles::build/$1', ['filter' => 'permission:proposals.view']);
 
     // Finance reports (CSV with ?export=csv)
     $routes->group('reports', ['filter' => 'permission:reports.view'], static function (RouteCollection $routes): void {
         $routes->get('', 'Reports::index');
         $routes->get('receivables', 'Reports::receivables');
         $routes->get('withholding', 'Reports::withholding');
+        $routes->get('lead-time', 'Reports::leadTime');
     });
 
     // Quick search (top bar); results limited per module permission and AccessScope
@@ -222,13 +227,13 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         $routes->post('backups/(:segment)/delete', 'Settings\Backups::delete/$1', ['filter' => 'permission:backups.manage']);
         $routes->post('backups/(:segment)/restore', 'Settings\Backups::restore/$1', ['filter' => 'permission:backups.restore']);
 
-        $routes->get('calculation', 'Settings\Calculation::edit');
-        $routes->post('calculation', 'Settings\Calculation::update');
+        $routes->get('calculation', 'Settings\Calculation::edit', ['filter' => 'permission:settings.system']);
+        $routes->post('calculation', 'Settings\Calculation::update', ['filter' => 'permission:settings.system']);
 
-        $routes->get('numbering', 'Settings\Numbering::index');
-        $routes->get('numbering/preview', 'Settings\Numbering::preview');
-        $routes->get('numbering/(:segment)', 'Settings\Numbering::edit/$1');
-        $routes->post('numbering/(:segment)', 'Settings\Numbering::update/$1');
+        $routes->get('numbering', 'Settings\Numbering::index', ['filter' => 'permission:settings.system']);
+        $routes->get('numbering/preview', 'Settings\Numbering::preview', ['filter' => 'permission:settings.system']);
+        $routes->get('numbering/(:segment)', 'Settings\Numbering::edit/$1', ['filter' => 'permission:settings.system']);
+        $routes->post('numbering/(:segment)', 'Settings\Numbering::update/$1', ['filter' => 'permission:settings.system']);
 
         $routes->get('lookups/(:segment)', 'Settings\Lookups::index/$1');
         $routes->get('lookups/(:segment)/new', 'Settings\Lookups::new/$1');

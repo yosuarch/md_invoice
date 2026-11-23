@@ -157,5 +157,5 @@ $current  = form_value('shipment_id', $note);
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/delivery-form.js') ?>"></script>
+<script src="<?= asset_url('assets/js/delivery-form.js') ?>"></script>
 <?= $this->endSection() ?>

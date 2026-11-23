@@ -112,8 +112,8 @@ class AppCheck extends BaseCommand
                 'lookups and numbering seeded', 'run php spark db:seed DatabaseSeeder');
             $this->check($db->table('region')->countAllResults() > 500, 'regions loaded', 'run php spark db:seed DatabaseSeeder', true);
 
-            $admins = $db->table('auth_groups_users')->where('group', 'admin')->countAllResults();
-            $this->check($admins > 0, "{$admins} admin user(s)", 'create one: php spark shield:user create, then shield:user addgroup -g admin');
+            $admins = $db->table('auth_groups_users')->where('group', 'app_admin')->countAllResults();
+            $this->check($admins > 0, "{$admins} app_admin user(s)", 'create one: php spark shield:user create, then shield:user addgroup -g app_admin');
 
             $profile = (new CompanyProfileModel())->getProfile();
             $this->check($profile !== null && trim((string) $profile['company_name']) !== '', 'company profile filled', 'fill Settings → Company (printed on every document)');

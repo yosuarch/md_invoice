@@ -68,7 +68,7 @@ $newUrl    = site_url('proposals/new' . ($customer !== null ? '?customer=' . $cu
 
 <div class="card shadow-sm" id="list-results">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 table-stack">
             <thead class="table-dark">
                 <tr>
                     <th><?= lang('App.number') ?></th>

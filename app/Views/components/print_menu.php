@@ -15,7 +15,7 @@
                 <a class="dropdown-item" href="<?= esc($item['url'], 'attr') ?>" target="_blank" rel="noopener">
                     <i class="bi bi-<?= esc($item['icon'] ?? 'file-earmark-pdf', 'attr') ?> me-2"></i><?= esc($item['label']) ?>
                 </a>
-                <a class="btn btn-link btn-sm px-2" hx-boost="false" href="<?= esc($item['url'], 'attr') ?>?download=1" title="<?= esc(lang('App.download'), 'attr') ?>" aria-label="<?= esc(lang('App.download') . ' ' . $item['label'], 'attr') ?>"><i class="bi bi-download"></i></a>
+                <a class="btn btn-link btn-sm px-2" hx-boost="false" href="<?= esc(download_url($item['url']), 'attr') ?>" title="<?= esc(lang('App.download'), 'attr') ?>" aria-label="<?= esc(lang('App.download') . ' ' . $item['label'], 'attr') ?>"><i class="bi bi-download"></i></a>
             </li>
         <?php endforeach ?>
     </ul>
