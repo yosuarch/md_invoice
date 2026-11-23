@@ -131,7 +131,7 @@ _modules/*
 #-------------------------
 # AI-generated files
 #-------------------------
-.assets/
-.continue/
-.guidelines/
-CLAUDE.md
+# .assets/
+# .continue/
+# .guidelines/
+# CLAUDE.md

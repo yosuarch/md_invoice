@@ -1,0 +1,34 @@
+# This is an example configuration file
+# To learn more, see the full config.yaml reference: https://docs.continue.dev/reference
+
+name: B2BInvoicingApp
+version: 1.0.0
+schema: v1
+
+# Define which models can be used
+# https://docs.continue.dev/customization/models
+models:
+  - name: InvoiceApp
+    provider: ollama
+    model: gemma4-12b-128k:latest
+    apiBase: http://10.10.3.8:11434/
+    roles:
+      - chat
+      - edit
+      - apply
+  - name: InvoiceApp-Autocomplete
+    provider: ollama
+    model: gemma4-12b-128k:latest
+    apiBase: http://10.10.3.8:11434/
+    roles:
+      - autocomplete
+  - name: InvoiceApp-Embed
+    provider: ollama
+    model: gemma4-12b-128k:latest
+    apiBase: http://10.10.3.8:11434/
+    roles:
+      - embed
+  - name: Autodetect
+    provider: ollama
+    model: AUTODETECT
+    apiBase: http://10.10.3.8:11434/
