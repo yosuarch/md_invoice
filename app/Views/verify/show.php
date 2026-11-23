@@ -15,8 +15,8 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Verifikasi dokumen | <?= esc($company) ?></title>
     <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon-64.png') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css?v=5.3.3') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=1.11.3') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 </head>
 <body class="auth-area d-flex flex-column min-vh-100">

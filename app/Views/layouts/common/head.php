@@ -18,8 +18,8 @@ $appName   = config('Navigation')->appName;
 
     <link rel="icon" href="<?= base_url('favicon.ico') ?>" sizes="any">
     <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon-64.png') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css?v=5.3.3') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=1.11.3') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 
     <?php /* Global scripts load once in <head>: the staff layout swaps only <body> (htmx boost), so they must not
@@ -27,8 +27,8 @@ $appName   = config('Navigation')->appName;
     <meta name="htmx-config" content='{"historyCacheSize":0,"refreshOnHistoryMiss":true,"scrollBehavior":"instant","includeIndicatorStyles":false,"defaultSettleDelay":0}'>
     <script>window.AppLang = <?= json_encode(js_strings(), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>;</script>
     <script>window.AppCalc = <?= json_encode(\App\Services\CalcSettings::current()->toJs()) ?>;</script>
-    <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-    <script src="<?= base_url('assets/vendor/htmx/htmx.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js?v=5.3.3') ?>"></script>
+    <script src="<?= base_url('assets/vendor/htmx/htmx.min.js?v=2.0.4') ?>"></script>
     <script src="<?= base_url('assets/js/app.js') ?>"></script>
     <script src="<?= base_url('assets/js/typeahead.js') ?>"></script>
     <script src="<?= base_url('assets/js/document-items.js') ?>"></script>
